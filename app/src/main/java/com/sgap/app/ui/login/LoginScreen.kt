@@ -1,33 +1,39 @@
 package com.sgap.app.ui.login
 
+import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.sgap.app.ui.componentes.BotonPrincipal
+import com.sgap.app.ui.componentes.CampoTexto
+import com.sgap.app.ui.componentes.MarcaSgap
+import com.sgap.app.ui.componentes.MensajeError
+import com.sgap.app.ui.theme.Primario
 import com.sgap.app.ui.theme.SGAPTheme
+import com.sgap.app.ui.theme.TextoSecundario
 import com.sgap.app.viewmodel.LoginEstado
 import com.sgap.app.viewmodel.LoginViewModel
 
@@ -38,9 +44,11 @@ import com.sgap.app.viewmodel.LoginViewModel
 @Composable
 fun LoginScreen(
     onLoginExitoso: () -> Unit,
+    onIrARegistro: () -> Unit,
     viewModel: LoginViewModel = viewModel()
 ) {
     val estado by viewModel.estado.collectAsState()
+    val contexto = LocalContext.current
 
     // Se ejecuta cuando loginExitoso cambia a true
     LaunchedEffect(estado.loginExitoso) {
@@ -52,17 +60,21 @@ fun LoginScreen(
         onCorreoCambio = viewModel::onCorreoCambio,
         onContrasenaCambio = viewModel::onContrasenaCambio,
         onEntrar = viewModel::iniciarSesion,
-        onCrearCuenta = { /* TODO: navegar a registro (siguiente paso) */ }
+        onOlvideContrasena = {
+            Toast.makeText(contexto, "Disponible próximamente", Toast.LENGTH_SHORT).show()
+        },
+        onCrearCuenta = onIrARegistro
     )
 }
 
-/** Solo dibuja; no sabe nada del ViewModel. Así se puede previsualizar en Android Studio. */
+/** Solo dibuja (diseño del Figma); no sabe nada del ViewModel. Así se puede previsualizar. */
 @Composable
 fun LoginContenido(
     estado: LoginEstado,
     onCorreoCambio: (String) -> Unit,
     onContrasenaCambio: (String) -> Unit,
     onEntrar: () -> Unit,
+    onOlvideContrasena: () -> Unit,
     onCrearCuenta: () -> Unit
 ) {
     Scaffold { padding ->
@@ -70,80 +82,73 @@ fun LoginContenido(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(horizontal = 24.dp),
+                .verticalScroll(rememberScrollState()) // para que el teclado no tape los campos
+                .padding(horizontal = 24.dp, vertical = 32.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Spacer(Modifier.height(40.dp))
+            MarcaSgap()
+            Spacer(Modifier.height(40.dp))
+
+            CampoTexto(
+                etiqueta = "Correo institucional",
+                valor = estado.correo,
+                onCambio = onCorreoCambio,
+                placeholder = "matricula@utcj.edu.mx",
+                tipoTeclado = KeyboardType.Email
+            )
+            Spacer(Modifier.height(16.dp))
+            CampoTexto(
+                etiqueta = "Contraseña",
+                valor = estado.contrasena,
+                onCambio = onContrasenaCambio,
+                placeholder = "••••••••",
+                esContrasena = true
+            )
+            Spacer(Modifier.height(16.dp))
             Text(
-                text = "SGAP",
-                style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Text(
-                text = "Tus tareas, exámenes y proyectos en un solo lugar",
-                style = MaterialTheme.typography.bodyMedium
-            )
-
-            Spacer(Modifier.height(32.dp))
-
-            OutlinedTextField(
-                value = estado.correo,
-                onValueChange = onCorreoCambio,
-                label = { Text("Correo") },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(Modifier.height(12.dp))
-            OutlinedTextField(
-                value = estado.contrasena,
-                onValueChange = onContrasenaCambio,
-                label = { Text("Contraseña") },
-                singleLine = true,
-                visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                modifier = Modifier.fillMaxWidth()
+                text = "¿Olvidaste tu contraseña?",
+                color = Primario,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier
+                    .align(Alignment.End)
+                    .clickable(onClick = onOlvideContrasena)
             )
 
-            // Mensaje de error (solo aparece si hay uno)
-            if (estado.error != null) {
-                Spacer(Modifier.height(8.dp))
-                Text(
-                    text = estado.error,
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-
+            MensajeError(estado.error)
             Spacer(Modifier.height(24.dp))
 
-            Button(
-                onClick = onEntrar,
-                enabled = !estado.cargando,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp)
-            ) {
-                if (estado.cargando) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        strokeWidth = 2.dp
-                    )
-                } else {
-                    Text("Entrar")
-                }
-            }
+            BotonPrincipal(texto = "Iniciar sesión", onClick = onEntrar, cargando = estado.cargando)
 
-            TextButton(onClick = onCrearCuenta) {
-                Text("¿No tienes cuenta? Regístrate", color = MaterialTheme.colorScheme.secondary)
-            }
+            Spacer(Modifier.height(20.dp))
+            EnlaceInferior(
+                pregunta = "¿No tienes cuenta?",
+                accion = "Regístrate",
+                onClick = onCrearCuenta
+            )
         }
     }
 }
 
+/** Renglón tipo "¿No tienes cuenta? Regístrate" donde solo la acción es tocable. */
+@Composable
+fun EnlaceInferior(pregunta: String, accion: String, onClick: () -> Unit) {
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+        Text(pregunta, color = TextoSecundario, style = MaterialTheme.typography.bodyMedium)
+        Text(
+            text = " $accion",
+            color = Primario,
+            fontWeight = FontWeight.SemiBold,
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.clickable(onClick = onClick)
+        )
+    }
+}
+
 // Vista previa: se ve en el panel "Split/Design" de Android Studio sin correr la app
-@Preview(showBackground = true)
+@Preview(showBackground = true, widthDp = 360, heightDp = 800)
 @Composable
 private fun LoginPreview() {
     SGAPTheme {
@@ -152,6 +157,7 @@ private fun LoginPreview() {
             onCorreoCambio = {},
             onContrasenaCambio = {},
             onEntrar = {},
+            onOlvideContrasena = {},
             onCrearCuenta = {}
         )
     }

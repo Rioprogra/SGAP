@@ -14,3 +14,7 @@ val ColorError = Color(0xFFD64545)
 val ColorTarea = Primario
 val ColorExamen = ColorError
 val ColorProyecto = Secundario
+
+// Colores de apoyo tomados del Figma
+val TextoSecundario = Color(0xFF6B7080) // subtítulos, fechas, placeholders
+val Borde = Color(0xFFE3E6EF)           // bordes de campos, tarjetas y chips

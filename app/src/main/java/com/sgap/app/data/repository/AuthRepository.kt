@@ -4,12 +4,15 @@ import kotlinx.coroutines.delay
 import com.sgap.app.data.model.Usuario
 
 /**
- * Contrato para iniciar sesión. La pantalla y el ViewModel solo conocen esta
- * interfaz, así que cambiar a Firebase (u otra API) después no toca la UI.
+ * Contrato para iniciar sesión y registrarse. La pantalla y el ViewModel solo
+ * conocen esta interfaz, así que cambiar a Firebase (u otra API) después no toca la UI.
  */
 interface AuthRepository {
     /** Devuelve el usuario si las credenciales son válidas, o un error. */
     suspend fun iniciarSesion(correo: String, contrasena: String): Result<Usuario>
+
+    /** Crea una cuenta nueva y devuelve el usuario, o un error. */
+    suspend fun registrar(nombre: String, correo: String, contrasena: String): Result<Usuario>
 }
 
 /**
@@ -25,5 +28,10 @@ class AuthRepositoryFalso : AuthRepository {
         } else {
             Result.failure(Exception("Correo o contraseña incorrectos"))
         }
+    }
+
+    override suspend fun registrar(nombre: String, correo: String, contrasena: String): Result<Usuario> {
+        delay(800)
+        return Result.success(Usuario(id = "demo", correo = correo, nombre = nombre))
     }
 }
