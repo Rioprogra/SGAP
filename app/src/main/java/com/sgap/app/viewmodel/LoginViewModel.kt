@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import com.sgap.app.data.repository.AuthRepository
-import com.sgap.app.data.repository.AuthRepositoryFalso
+import com.sgap.app.data.repository.Repositorios
 
 /** Todo lo que la pantalla de login necesita dibujar, en un solo objeto. */
 data class LoginEstado(
@@ -25,7 +25,7 @@ data class LoginEstado(
  * Sobrevive a rotaciones de pantalla (por eso el estado no vive en la UI).
  */
 class LoginViewModel(
-    private val repositorio: AuthRepository = AuthRepositoryFalso()
+    private val repositorio: AuthRepository = Repositorios.auth
 ) : ViewModel() {
 
     private val _estado = MutableStateFlow(LoginEstado())
