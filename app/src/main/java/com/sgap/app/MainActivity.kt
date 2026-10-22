@@ -1,73 +1,59 @@
 package com.sgap.app
 
+import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.runtime.Composable
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import com.sgap.app.ui.home.InicioScreen
-import com.sgap.app.ui.login.LoginScreen
-import com.sgap.app.ui.registro.RegistroScreen
-import com.sgap.app.ui.tareas.NuevaTareaScreen
-import com.sgap.app.ui.theme.SGAPTheme
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 
-/**
- * Única Activity de la app. Solo aplica el tema y define la navegación
- * entre pantallas; cada pantalla vive en su propia carpeta dentro de ui/.
- */
-class MainActivity : ComponentActivity() {
+// Pantalla de inicio de sesion
+class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContent {
-            SGAPTheme {
-                SgapNavHost()
+        setContentView(R.layout.activity_main)
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
+
+        val txtCorreo = findViewById<EditText>(R.id.txtCorreo)
+        val txtContrasena = findViewById<EditText>(R.id.txtContrasena)
+        val btnIniciar = findViewById<Button>(R.id.btnIniciar)
+        val txtOlvide = findViewById<TextView>(R.id.txtOlvide)
+        val txtRegistrate = findViewById<TextView>(R.id.txtRegistrate)
+
+        btnIniciar.setOnClickListener {
+            val correo = txtCorreo.text.toString().trim()
+            val contrasena = txtContrasena.text.toString()
+
+            if (correo.isEmpty() || contrasena.isEmpty()) {
+                Toast.makeText(this, "Llena todos los campos", Toast.LENGTH_SHORT).show()
+            } else if (!correo.contains("@")) {
+                Toast.makeText(this, "Escribe un correo valido", Toast.LENGTH_SHORT).show()
+            } else if (contrasena.length < 6) {
+                Toast.makeText(this, "La contraseña debe tener minimo 6 caracteres", Toast.LENGTH_SHORT).show()
+            } else {
+                // Todavia no hay base de datos, entonces cualquier correo entra
+                val intent = Intent(this, Inicio::class.java)
+                startActivity(intent)
+                txtContrasena.setText("")
             }
         }
-    }
-}
 
-/** Rutas de navegación: cada pantalla tiene un nombre único. */
-object Rutas {
-    const val LOGIN = "login"
-    const val REGISTRO = "registro"
-    const val INICIO = "inicio"
-    const val NUEVA_TAREA = "nueva_tarea"
-}
+        txtOlvide.setOnClickListener {
+            Toast.makeText(this, "Proximamente", Toast.LENGTH_SHORT).show()
+        }
 
-@Composable
-fun SgapNavHost() {
-    val navController = rememberNavController()
-
-    // Al entrar (login o registro) se va a Inicio y se borra el historial,
-    // así el botón "atrás" no regresa a la pantalla de login.
-    val irAInicio = {
-        navController.navigate(Rutas.INICIO) {
-            popUpTo(navController.graph.id) { inclusive = true }
-        }
-    }
-
-    NavHost(navController = navController, startDestination = Rutas.LOGIN) {
-        composable(Rutas.LOGIN) {
-            LoginScreen(
-                onLoginExitoso = irAInicio,
-                onIrARegistro = { navController.navigate(Rutas.REGISTRO) }
-            )
-        }
-        composable(Rutas.REGISTRO) {
-            RegistroScreen(
-                onRegistroExitoso = irAInicio,
-                onIrALogin = { navController.popBackStack() }
-            )
-        }
-        composable(Rutas.INICIO) {
-            InicioScreen(onNuevaTarea = { navController.navigate(Rutas.NUEVA_TAREA) })
-        }
-        composable(Rutas.NUEVA_TAREA) {
-            NuevaTareaScreen(onTerminar = { navController.popBackStack() })
+        txtRegistrate.setOnClickListener {
+            val intent = Intent(this, Registro::class.java)
+            startActivity(intent)
         }
     }
 }
