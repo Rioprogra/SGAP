@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Logo de StudyGest (libro con palomita), copiado del SVG del Figma -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="100dp"
+    android:viewportWidth="120"
+    android:viewportHeight="100">
+    <path
+        android:fillColor="#8AA9C4"
+        android:pathData="M8,11C8,8 10.5,6 13.4,6.9L50.6,19C53.9,20.1 56,23.1 56,26.6V90C56,92.8 53.3,94.7 50.7,93.8L13.4,81C10.2,79.9 8,76.9 8,73.5V11Z" />
+    <path
+        android:fillColor="#3E5C76"
+        android:pathData="M66,22.5V17C66,14.4 67.7,12.1 70.2,11.3L99,2.4C101.6,1.6 104,3.5 104,6.2V11L66,22.5Z" />
+    <path
+        android:fillColor="#3E5C76"
+        android:pathData="M64,31C64,27.5 66.3,24.4 69.6,23.4L106.4,12C109.2,11.1 112,13.2 112,16.1V73.5C112,77 109.7,80.1 106.4,81.1L69.6,93C66.8,93.9 64,91.8 64,88.9V31Z" />
+    <path
+        android:pathData="M76,56L84.5,64.5L101,46"
+        android:strokeWidth="7"
+        android:strokeColor="#FFFFFF"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>

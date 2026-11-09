@@ -1,10 +1,214 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.SGAP" parent="Theme.Material3.Light.NoActionBar">
+    <style name="Theme.StudyGest" parent="Theme.Material3.Light.NoActionBar">
         <item name="colorPrimary">@color/primario</item>
+        <item name="colorOnPrimary">@color/sobre_primario</item>
         <item name="colorSecondary">@color/secundario</item>
         <item name="android:colorBackground">@color/fondo</item>
         <item name="colorError">@color/error</item>
+        <item name="android:datePickerDialogTheme">@style/Calendario</item>
+    </style>
+
+    <!-- Calendario de Nueva tarea: encabezado y dia elegido en el azul de la app -->
+    <style name="Calendario" parent="ThemeOverlay.Material3.Dialog">
+        <item name="android:colorAccent">@color/primario</item>
+        <item name="colorAccent">@color/primario</item>
+        <item name="colorPrimary">@color/primario</item>
+        <item name="colorSecondary">@color/primario</item>
+    </style>
+
+    <!-- Estilos que se repiten en varias pantallas -->
+
+    <!-- Texto chiquito arriba de cada campo (ej. "Correo institucional") -->
+    <style name="Etiqueta">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:textColor">@color/texto</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <!-- Caja blanca con borde para escribir -->
+    <style name="Campo">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:background">@drawable/bg_campo</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:paddingTop">14dp</item>
+        <item name="android:paddingBottom">14dp</item>
+        <item name="android:textColor">@color/texto</item>
+        <item name="android:textColorHint">@color/placeholder</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <!-- Boton azul grande (Iniciar sesion, Guardar tarea, etc.) -->
+    <style name="BotonPrimario" parent="Widget.Material3.Button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">52dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="backgroundTint">@color/primario</item>
+        <item name="android:textColor">@color/sobre_primario</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="cornerRadius">14dp</item>
+    </style>
+
+    <!-- Chip de filtro (Todos, No leidos, ...). El color se cambia desde el codigo -->
+    <style name="Chip">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginEnd">6dp</item>
+        <item name="android:background">@drawable/bg_chip</item>
+        <item name="android:paddingStart">10dp</item>
+        <item name="android:paddingEnd">10dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:textColor">@color/texto_suave</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <!-- Cada pestana de la barra de abajo -->
+    <style name="NavBoton">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+    </style>
+
+    <style name="NavIndicador">
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">3dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:background">@drawable/bg_indicador</item>
+        <item name="android:visibility">invisible</item>
+    </style>
+
+    <style name="NavTexto">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/texto_suave</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <!-- Circulito con las iniciales de un integrante -->
+    <style name="Avatar">
+        <item name="android:layout_width">28dp</item>
+        <item name="android:layout_height">28dp</item>
+        <item name="android:background">@drawable/bg_avatar</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/sobre_primario</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Boton de opcion (Tipo: Tarea / Examen / Proyecto) -->
+    <style name="Opcion">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@drawable/bg_opcion</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:textColor">@color/texto_suave</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <!-- Flecha para regresar y titulo de las pantallas sin barra de abajo -->
+    <style name="Regresar">
+        <item name="android:layout_width">40dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:contentDescription">Regresar</item>
+        <item name="android:text">←</item>
+        <item name="android:textColor">@color/texto</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="TituloBarra">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">4dp</item>
+        <item name="android:textColor">@color/texto</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Titulo de seccion ("Notificaciones", "Por entregar") y su link de la derecha -->
+    <style name="TituloSeccion">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textColor">@color/texto</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="LinkSeccion">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:textColor">@color/primario</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Cuadritos con numeros del Perfil -->
+    <style name="Dato">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@drawable/bg_tarjeta</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:paddingTop">14dp</item>
+        <item name="android:paddingBottom">14dp</item>
+    </style>
+
+    <style name="DatoNumero">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/texto</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="DatoTexto">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">2dp</item>
+        <item name="android:textColor">@color/texto_suave</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <!-- Encabezado de las pantallas con barra de abajo -->
+    <style name="Subtitulo">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/texto_suave</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="Titulo">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:textColor">@color/texto</item>
+        <item name="android:textSize">26sp</item>
+        <item name="android:textStyle">bold</item>
     </style>
 </resources>

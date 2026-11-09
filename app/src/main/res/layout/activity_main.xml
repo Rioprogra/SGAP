@@ -1,81 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Pantalla de inicio de sesion (Figma: Login) -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
-    android:fitsSystemWindows="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
     android:background="@color/fondo"
-    android:padding="24dp"
+    android:fillViewport="true"
+    android:fitsSystemWindows="true"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:background="@color/primario"
-        android:gravity="center"
-        android:text="S"
-        android:textColor="@color/white"
-        android:textSize="40sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="SGAP"
-        android:textColor="@color/texto"
-        android:textSize="30sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:text="Sistema de Gestión Académica Personal"
-        android:textColor="@color/texto"
-        android:textSize="16sp" />
-
-    <EditText
-        android:id="@+id/txtCorreo"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Correo institucional"
-        android:inputType="textEmailAddress" />
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:padding="24dp">
 
-    <EditText
-        android:id="@+id/txtContrasena"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="Contraseña"
-        android:inputType="textPassword" />
+        <!-- Marca: logo, nombre y lema -->
+        <ImageView
+            android:layout_width="120dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center_horizontal"
+            android:contentDescription="Logo de StudyGest"
+            android:src="@drawable/logo_studygest" />
 
-    <TextView
-        android:id="@+id/txtOlvide"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:layout_marginTop="8dp"
-        android:text="¿Olvidaste tu contraseña?"
-        android:textColor="@color/primario" />
+        <!-- "Study" oscuro y "Gest" azul claro -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/btnIniciar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:backgroundTint="@color/primario"
-        android:text="Iniciar sesión" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-black"
+                android:letterSpacing="-0.02"
+                android:text="Study"
+                android:textColor="@color/texto"
+                android:textSize="34sp" />
 
-    <TextView
-        android:id="@+id/txtRegistrate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="¿No tienes cuenta? Regístrate"
-        android:textColor="@color/primario" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-black"
+                android:letterSpacing="-0.02"
+                android:text="Gest"
+                android:textColor="@color/secundario"
+                android:textSize="34sp" />
+        </LinearLayout>
 
-</LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:text="Organiza tus clases, canales y grupos"
+            android:textColor="@color/texto_suave"
+            android:textSize="14sp" />
+
+        <!-- Formulario -->
+        <TextView
+            style="@style/Etiqueta"
+            android:layout_marginTop="40dp"
+            android:text="Correo institucional" />
+
+        <EditText
+            android:id="@+id/txtCorreo"
+            style="@style/Campo"
+            android:hint="matricula@utcj.edu.mx"
+            android:inputType="textEmailAddress" />
+
+        <TextView
+            style="@style/Etiqueta"
+            android:layout_marginTop="16dp"
+            android:text="Contraseña" />
+
+        <EditText
+            android:id="@+id/txtContrasena"
+            style="@style/Campo"
+            android:hint="••••••••"
+            android:inputType="textPassword" />
+
+        <TextView
+            android:id="@+id/txtOlvide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="16dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="¿Olvidaste tu contraseña?"
+            android:textColor="@color/primario"
+            android:textSize="13sp" />
+
+        <Button
+            android:id="@+id/btnIniciar"
+            style="@style/BotonPrimario"
+            android:layout_marginTop="24dp"
+            android:text="Iniciar sesión" />
+
+        <!-- "¿No tienes cuenta? Regístrate" -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="¿No tienes cuenta?"
+                android:textColor="@color/texto_suave"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/txtRegistrate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="Regístrate"
+                android:textColor="@color/primario"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

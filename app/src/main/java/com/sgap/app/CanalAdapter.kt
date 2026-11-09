@@ -1,0 +1,47 @@
+package com.sgap.app
+
+import android.content.Context
+import android.content.res.ColorStateList
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.TextView
+import androidx.core.content.ContextCompat
+
+// Adaptador para que cada renglon del ListView se vea como la "Tarjeta canal" del Figma.
+// Es igual que el ArrayAdapter de clase, pero usamos nuestro propio layout (item_canal.xml).
+class CanalAdapter(context: Context, val canales: List<Canal>) :
+    ArrayAdapter<Canal>(context, 0, canales) {
+
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+        // Si el renglon ya existe se reusa, si no se crea desde el XML
+        val vista = convertView ?: LayoutInflater.from(context).inflate(R.layout.item_canal, parent, false)
+
+        val canal = canales[position]
+
+        val txtIcono = vista.findViewById<TextView>(R.id.txtIcono)
+        val txtNombre = vista.findViewById<TextView>(R.id.txtNombre)
+        val txtMensaje = vista.findViewById<TextView>(R.id.txtMensaje)
+        val txtHora = vista.findViewById<TextView>(R.id.txtHora)
+        val txtNoLeidos = vista.findViewById<TextView>(R.id.txtNoLeidos)
+
+        txtNombre.text = canal.nombre
+        txtMensaje.text = canal.ultimoMensaje
+        txtHora.text = canal.hora
+
+        // Color del cuadrito y del "#" segun el canal
+        txtIcono.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, canal.fondoIcono))
+        txtIcono.setTextColor(ContextCompat.getColor(context, canal.colorIcono))
+
+        // La burbuja roja solo sale si hay mensajes sin leer
+        if (canal.noLeidos > 0) {
+            txtNoLeidos.text = canal.noLeidos.toString()
+            txtNoLeidos.visibility = View.VISIBLE
+        } else {
+            txtNoLeidos.visibility = View.GONE
+        }
+
+        return vista
+    }
+}

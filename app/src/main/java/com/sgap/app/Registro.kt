@@ -37,6 +37,9 @@ class Registro : AppCompatActivity() {
             } else if (contrasena != confirmar) {
                 Toast.makeText(this, "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show()
             } else {
+                // Se guarda en memoria para que el Perfil muestre tu nombre
+                Usuario.nombreRegistrado = nombre
+                Usuario.correoRegistrado = correo
                 Toast.makeText(this, "Cuenta creada, ya puedes iniciar sesion", Toast.LENGTH_SHORT).show()
                 finish() // regresa al login
             }

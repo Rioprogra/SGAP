@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Barra de abajo (Inicio, Grupo, Horario, Perfil).
+     Se agrega a cada pantalla con <include layout="@layout/barra_navegacion" />
+     y se activa con Navegacion.configurar(this, R.id.navInicio) -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_barra_navegacion"
+    android:orientation="horizontal"
+    android:paddingTop="10dp"
+    android:paddingBottom="12dp">
+
+    <LinearLayout
+        android:id="@+id/navInicio"
+        style="@style/NavBoton">
+
+        <View
+            android:id="@+id/indInicio"
+            style="@style/NavIndicador" />
+
+        <TextView
+            android:id="@+id/txtNavInicio"
+            style="@style/NavTexto"
+            android:text="Inicio" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/navGrupo"
+        style="@style/NavBoton">
+
+        <View
+            android:id="@+id/indGrupo"
+            style="@style/NavIndicador" />
+
+        <TextView
+            android:id="@+id/txtNavGrupo"
+            style="@style/NavTexto"
+            android:text="Grupo" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/navHorario"
+        style="@style/NavBoton">
+
+        <View
+            android:id="@+id/indHorario"
+            style="@style/NavIndicador" />
+
+        <TextView
+            android:id="@+id/txtNavHorario"
+            style="@style/NavTexto"
+            android:text="Horario" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/navPerfil"
+        style="@style/NavBoton">
+
+        <View
+            android:id="@+id/indPerfil"
+            style="@style/NavIndicador" />
+
+        <TextView
+            android:id="@+id/txtNavPerfil"
+            style="@style/NavTexto"
+            android:text="Perfil" />
+    </LinearLayout>
+
+</LinearLayout>

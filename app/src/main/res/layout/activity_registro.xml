@@ -1,70 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Pantalla para crear cuenta (no esta en el Figma, usa el mismo estilo del Login) -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
-    android:fitsSystemWindows="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
     android:background="@color/fondo"
-    android:padding="24dp"
+    android:fillViewport="true"
+    android:fitsSystemWindows="true"
     tools:context=".Registro">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
-        android:text="Crear cuenta"
-        android:textColor="@color/texto"
-        android:textSize="30sp"
-        android:textStyle="bold" />
-
-    <EditText
-        android:id="@+id/txtNombre"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Nombre completo"
-        android:inputType="textPersonName" />
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:padding="24dp">
 
-    <EditText
-        android:id="@+id/txtCorreo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="Correo institucional"
-        android:inputType="textEmailAddress" />
+        <ImageView
+            android:layout_width="72dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center_horizontal"
+            android:contentDescription="Logo de StudyGest"
+            android:src="@drawable/logo_studygest" />
 
-    <EditText
-        android:id="@+id/txtContrasena"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="Contraseña"
-        android:inputType="textPassword" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:fontFamily="sans-serif-black"
+            android:letterSpacing="-0.02"
+            android:text="Crear cuenta"
+            android:textColor="@color/texto"
+            android:textSize="28sp" />
 
-    <EditText
-        android:id="@+id/txtConfirmar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="Confirmar contraseña"
-        android:inputType="textPassword" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="6dp"
+            android:text="Usa tu correo de la escuela"
+            android:textColor="@color/texto_suave"
+            android:textSize="14sp" />
 
-    <Button
-        android:id="@+id/btnRegistrar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:backgroundTint="@color/primario"
-        android:text="Registrarme" />
+        <TextView
+            style="@style/Etiqueta"
+            android:layout_marginTop="32dp"
+            android:text="Nombre completo" />
 
-    <TextView
-        android:id="@+id/txtIniciaSesion"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="¿Ya tienes cuenta? Inicia sesión"
-        android:textColor="@color/primario" />
+        <EditText
+            android:id="@+id/txtNombre"
+            style="@style/Campo"
+            android:hint="Ej. Ana López"
+            android:inputType="textPersonName" />
 
-</LinearLayout>
+        <TextView
+            style="@style/Etiqueta"
+            android:layout_marginTop="16dp"
+            android:text="Correo institucional" />
+
+        <EditText
+            android:id="@+id/txtCorreo"
+            style="@style/Campo"
+            android:hint="matricula@utcj.edu.mx"
+            android:inputType="textEmailAddress" />
+
+        <TextView
+            style="@style/Etiqueta"
+            android:layout_marginTop="16dp"
+            android:text="Contraseña" />
+
+        <EditText
+            android:id="@+id/txtContrasena"
+            style="@style/Campo"
+            android:hint="Mínimo 6 caracteres"
+            android:inputType="textPassword" />
+
+        <TextView
+            style="@style/Etiqueta"
+            android:layout_marginTop="16dp"
+            android:text="Confirmar contraseña" />
+
+        <EditText
+            android:id="@+id/txtConfirmar"
+            style="@style/Campo"
+            android:hint="Repite tu contraseña"
+            android:inputType="textPassword" />
+
+        <Button
+            android:id="@+id/btnRegistrar"
+            style="@style/BotonPrimario"
+            android:layout_marginTop="24dp"
+            android:text="Crear cuenta" />
+
+        <!-- "¿Ya tienes cuenta? Inicia sesión" -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="¿Ya tienes cuenta?"
+                android:textColor="@color/texto_suave"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/txtIniciaSesion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="Inicia sesión"
+                android:textColor="@color/primario"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

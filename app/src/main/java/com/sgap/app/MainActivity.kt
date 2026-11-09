@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "La contraseña debe tener minimo 6 caracteres", Toast.LENGTH_SHORT).show()
             } else {
                 // Todavia no hay base de datos, entonces cualquier correo entra
+                Usuario.iniciarSesion(correo)
                 val intent = Intent(this, Inicio::class.java)
                 startActivity(intent)
                 txtContrasena.setText("")

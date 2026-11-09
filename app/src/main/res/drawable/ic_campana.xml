@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Boton de notificaciones: circulo blanco con borde y campana (del Figma) -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="40dp"
+    android:height="40dp"
+    android:viewportWidth="40"
+    android:viewportHeight="40">
+    <path
+        android:fillColor="#FFFFFF"
+        android:strokeColor="#C9DCE8"
+        android:strokeWidth="1"
+        android:pathData="M20,0.5A19.5,19.5 0,1 1,20 39.5A19.5,19.5 0,1 1,20 0.5Z" />
+    <path
+        android:strokeColor="#1D2D44"
+        android:strokeWidth="1.66667"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M15,16.6667C15,15.3406 15.5268,14.0688 16.4645,13.1311C17.4021,12.1935 18.6739,11.6667 20,11.6667C21.3261,11.6667 22.5979,12.1935 23.5355,13.1311C24.4732,14.0688 25,15.3406 25,16.6667C25,22.5 27.5,24.1667 27.5,24.1667H12.5C12.5,24.1667 15,22.5 15,16.6667Z" />
+    <path
+        android:strokeColor="#1D2D44"
+        android:strokeWidth="1.66667"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M18.5833,27.5C18.7228,27.7537 18.9279,27.9653 19.1771,28.1127C19.4263,28.26 19.7105,28.3378 20,28.3378C20.2895,28.3378 20.5737,28.26 20.8229,28.1127C21.0721,27.9653 21.2772,27.7537 21.4167,27.5" />
+</vector>

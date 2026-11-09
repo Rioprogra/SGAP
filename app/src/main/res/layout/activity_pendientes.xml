@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Notificaciones y tareas por entregar (Figma: Pendientes). Se abre con la campana -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/fondo"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical"
+    tools:context=".Pendientes">
+
+    <!-- Barra superior -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="12dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="8dp">
+
+        <TextView
+            android:id="@+id/btnRegresar"
+            style="@style/Regresar" />
+
+        <TextView
+            style="@style/TituloBarra"
+            android:text="Pendientes" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="24dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="24dp"
+            android:paddingBottom="24dp">
+
+            <!-- Seccion Notificaciones -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/TituloSeccion"
+                    android:text="Notificaciones" />
+
+                <TextView
+                    android:id="@+id/txtMarcarLeidas"
+                    style="@style/LinkSeccion"
+                    android:text="Marcar como leídas" />
+            </LinearLayout>
+
+            <!-- Aqui se agregan las notificaciones desde el codigo -->
+            <LinearLayout
+                android:id="@+id/contNotificaciones"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+            <!-- Seccion Por entregar -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/TituloSeccion"
+                    android:text="Por entregar" />
+
+                <TextView
+                    android:id="@+id/txtVerTodo"
+                    style="@style/LinkSeccion"
+                    android:text="Ver todo" />
+            </LinearLayout>
+
+            <!-- Aqui se agregan las tareas desde el codigo -->
+            <LinearLayout
+                android:id="@+id/contPendientes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+            <TextView
+                android:id="@+id/txtSinPendientes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:text="No tienes nada por entregar"
+                android:textColor="@color/texto_suave"
+                android:visibility="gone" />
+
+            <!-- Para agregar una tarea desde aqui tambien -->
+            <TextView
+                android:id="@+id/btnNuevaTarea"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_opcion"
+                android:gravity="center"
+                android:paddingTop="14dp"
+                android:paddingBottom="14dp"
+                android:text="+ Nueva tarea"
+                android:textColor="@color/primario"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
