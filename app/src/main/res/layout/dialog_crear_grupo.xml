@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="24dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="24dp">
+
+        <TextView
+            style="@style/Etiqueta"
+            android:text="Nombre del grupo" />
+
+        <EditText
+            android:id="@+id/txtNombreGrupo"
+            style="@style/Campo"
+            android:hint="Ej. Equipo Alfa"
+            android:inputType="textCapWords" />
+
+        <TextView
+            style="@style/Etiqueta"
+            android:layout_marginTop="12dp"
+            android:text="Materia" />
+
+        <EditText
+            android:id="@+id/txtMateria"
+            style="@style/Campo"
+            android:hint="Ej. Base de Datos"
+            android:inputType="textCapSentences" />
+
+        <TextView
+            style="@style/Etiqueta"
+            android:layout_marginTop="12dp"
+            android:text="Tipo" />
+
+        <RadioGroup
+            android:id="@+id/rgTipoGrupo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/rbProyecto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="Proyecto" />
+
+            <RadioButton
+                android:id="@+id/rbEstudio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="Estudio" />
+        </RadioGroup>
+
+        <TextView
+            style="@style/Etiqueta"
+            android:layout_marginTop="12dp"
+            android:text="Cupo (máximo de integrantes)" />
+
+        <EditText
+            android:id="@+id/txtCupo"
+            style="@style/Campo"
+            android:hint="Ej. 5"
+            android:inputType="number"
+            android:maxLength="2" />
+
+        <TextView
+            style="@style/Etiqueta"
+            android:layout_marginTop="12dp"
+            android:text="Descripción (opcional)" />
+
+        <EditText
+            android:id="@+id/txtDescripcionGrupo"
+            style="@style/Campo"
+            android:hint="¿De qué trata el grupo?"
+            android:inputType="textMultiLine|textCapSentences" />
+    </LinearLayout>
+</ScrollView>

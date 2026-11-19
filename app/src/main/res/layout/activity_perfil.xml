@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Pestana Perfil (no esta en el Figma: version sencilla con el mismo estilo) -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -10,7 +9,6 @@
     android:orientation="vertical"
     tools:context=".Perfil">
 
-    <!-- Encabezado -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -43,7 +41,6 @@
             android:paddingEnd="24dp"
             android:paddingBottom="24dp">
 
-            <!-- Tarjeta con tus datos -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -99,7 +96,6 @@
                     android:textStyle="bold" />
             </LinearLayout>
 
-            <!-- Numeritos: pendientes, grupos y canales -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -146,7 +142,6 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Opciones -->
             <TextView
                 android:id="@+id/btnMisPendientes"
                 android:layout_width="match_parent"
@@ -161,6 +156,48 @@
                 android:textColor="@color/texto"
                 android:textSize="15sp"
                 android:fontFamily="sans-serif-medium" />
+
+            <TextView
+                android:id="@+id/btnProgreso"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_tarjeta"
+                android:paddingStart="16dp"
+                android:paddingTop="16dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="16dp"
+                android:text="Progreso por materia  →"
+                android:textColor="@color/texto"
+                android:textSize="15sp"
+                android:fontFamily="sans-serif-medium" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_tarjeta"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="16dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="4dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="Modo oscuro"
+                    android:textColor="@color/texto"
+                    android:textSize="15sp" />
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/swModoOscuro"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
 
             <Button
                 android:id="@+id/btnCerrarSesion"

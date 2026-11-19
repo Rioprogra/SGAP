@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Pestana Horario (no esta en el Figma: version sencilla con el mismo estilo) -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -10,7 +9,6 @@
     android:orientation="vertical"
     tools:context=".Horario">
 
-    <!-- Encabezado -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,7 +27,6 @@
             android:text="Mi horario" />
     </LinearLayout>
 
-    <!-- Dias de la semana -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

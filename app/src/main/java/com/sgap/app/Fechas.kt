@@ -2,9 +2,7 @@ package com.sgap.app
 
 import java.util.Calendar
 
-// Para escribir fechas cortas como en el Figma: "Vie 2 oct"
 object Fechas {
-    // Calendar.SUNDAY = 1, por eso el domingo va primero
     val dias = listOf("Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb")
     val meses = listOf("ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic")
 
@@ -15,7 +13,6 @@ object Fechas {
         return "$dia $numero $mes"
     }
 
-    // Fecha de hoy + cierta cantidad de dias (para los datos de ejemplo)
     fun enDias(dias: Int): Calendar {
         val calendario = Calendar.getInstance()
         calendario.add(Calendar.DAY_OF_MONTH, dias)

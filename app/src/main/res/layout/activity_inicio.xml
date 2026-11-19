@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Pantalla principal: Mis canales (Figma: Inicio) -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -10,7 +9,6 @@
     android:orientation="vertical"
     tools:context=".Inicio">
 
-    <!-- Encabezado: fecha, titulo y campana -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -49,7 +47,6 @@
                 android:importantForAccessibility="no"
                 android:src="@drawable/ic_campana" />
 
-            <!-- Puntito rojo: hay notificaciones nuevas -->
             <View
                 android:id="@+id/puntoAviso"
                 android:layout_width="10dp"
@@ -60,7 +57,6 @@
         </FrameLayout>
     </LinearLayout>
 
-    <!-- Filtros -->
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -97,13 +93,11 @@
         </LinearLayout>
     </HorizontalScrollView>
 
-    <!-- Lista + boton "+" encima -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <!-- paddingBottom grande para que el "+" no tape la ultima tarjeta -->
         <ListView
             android:id="@+id/lvCanales"
             android:layout_width="match_parent"

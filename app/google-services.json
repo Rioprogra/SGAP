@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "523445619583",
+    "project_id": "studygest",
+    "storage_bucket": "studygest.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:523445619583:android:fbbc5395838bb92b5d284a",
+        "android_client_info": {
+          "package_name": "com.sgap.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsrf8Q3haaqDzt2mt60KdveOdCrxPWKDU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

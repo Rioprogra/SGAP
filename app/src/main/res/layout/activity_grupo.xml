@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Pestana Grupo: equipos y grupos de estudio (Figma: Grupo) -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -10,7 +9,6 @@
     android:orientation="vertical"
     tools:context=".Grupo">
 
-    <!-- Encabezado -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,7 +27,6 @@
             android:text="Grupos del salón" />
     </LinearLayout>
 
-    <!-- Filtros -->
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -66,13 +63,11 @@
         </LinearLayout>
     </HorizontalScrollView>
 
-    <!-- Lista + boton "+" encima -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <!-- paddingBottom grande para que el "+" no tape la ultima tarjeta -->
         <ListView
             android:id="@+id/lvGrupos"
             android:layout_width="match_parent"

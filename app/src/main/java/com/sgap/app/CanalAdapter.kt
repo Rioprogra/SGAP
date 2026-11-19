@@ -9,13 +9,10 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 
-// Adaptador para que cada renglon del ListView se vea como la "Tarjeta canal" del Figma.
-// Es igual que el ArrayAdapter de clase, pero usamos nuestro propio layout (item_canal.xml).
 class CanalAdapter(context: Context, val canales: List<Canal>) :
     ArrayAdapter<Canal>(context, 0, canales) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        // Si el renglon ya existe se reusa, si no se crea desde el XML
         val vista = convertView ?: LayoutInflater.from(context).inflate(R.layout.item_canal, parent, false)
 
         val canal = canales[position]
@@ -30,11 +27,9 @@ class CanalAdapter(context: Context, val canales: List<Canal>) :
         txtMensaje.text = canal.ultimoMensaje
         txtHora.text = canal.hora
 
-        // Color del cuadrito y del "#" segun el canal
         txtIcono.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, canal.fondoIcono))
         txtIcono.setTextColor(ContextCompat.getColor(context, canal.colorIcono))
 
-        // La burbuja roja solo sale si hay mensajes sin leer
         if (canal.noLeidos > 0) {
             txtNoLeidos.text = canal.noLeidos.toString()
             txtNoLeidos.visibility = View.VISIBLE

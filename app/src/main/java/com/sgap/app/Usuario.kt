@@ -1,25 +1,18 @@
 package com.sgap.app
 
-// Datos del alumno que inicio sesion (solo en memoria, todavia no hay base de datos)
 object Usuario {
     var nombre = ""
     var correo = ""
 
-    // Cuenta creada en Registro (para poner el nombre real al iniciar sesion)
-    var nombreRegistrado = ""
-    var correoRegistrado = ""
-
-    fun iniciarSesion(correoEscrito: String) {
-        correo = correoEscrito
-        if (correoEscrito.equals(correoRegistrado, ignoreCase = true) && nombreRegistrado.isNotEmpty()) {
-            nombre = nombreRegistrado
+    fun iniciarSesion(correoUsuario: String, nombreFirebase: String?) {
+        correo = correoUsuario
+        if (!nombreFirebase.isNullOrBlank()) {
+            nombre = nombreFirebase
         } else {
-            // Si no se registro, usamos lo que va antes de la @ (la matricula)
-            nombre = correoEscrito.substringBefore("@")
+            nombre = correoUsuario.substringBefore("@")
         }
     }
 
-    // "Ana López" -> "AL", "20231234" -> "20"
     fun iniciales(): String {
         val palabras = nombre.trim().split(" ")
         if (palabras.size >= 2 && palabras[1].isNotEmpty()) {

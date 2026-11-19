@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Pantalla para agregar una tarea, examen o proyecto (Figma: Nueva tarea) -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -10,7 +9,6 @@
     android:orientation="vertical"
     tools:context=".NuevaTarea">
 
-    <!-- Barra superior -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -26,11 +24,11 @@
             style="@style/Regresar" />
 
         <TextView
+            android:id="@+id/txtTituloPantalla"
             style="@style/TituloBarra"
             android:text="Nueva tarea" />
     </LinearLayout>
 
-    <!-- Formulario (con scroll para cuando sale el teclado) -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -52,14 +50,14 @@
                 android:id="@+id/txtTitulo"
                 style="@style/Campo"
                 android:hint="Ej. Tarea de Base de Datos"
-                android:inputType="textCapSentences" />
+                android:inputType="textCapSentences"
+                android:maxLength="80" />
 
             <TextView
                 style="@style/Etiqueta"
                 android:layout_marginTop="20dp"
                 android:text="Tipo" />
 
-            <!-- Tres botones en vez del RadioGroup. Solo uno puede estar elegido -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -86,9 +84,35 @@
             <TextView
                 style="@style/Etiqueta"
                 android:layout_marginTop="20dp"
+                android:text="Materia" />
+
+            <Spinner
+                android:id="@+id/spMateria"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_campo"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp" />
+
+            <TextView
+                android:id="@+id/lblPara"
+                style="@style/Etiqueta"
+                android:layout_marginTop="20dp"
+                android:text="¿Para quién?" />
+
+            <Spinner
+                android:id="@+id/spPara"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_campo"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp" />
+
+            <TextView
+                style="@style/Etiqueta"
+                android:layout_marginTop="20dp"
                 android:text="Fecha de entrega" />
 
-            <!-- Parece campo de texto, pero al tocarlo abre el calendario -->
             <TextView
                 android:id="@+id/txtFecha"
                 style="@style/Campo"
@@ -105,11 +129,32 @@
                 android:gravity="top"
                 android:hint="Agrega detalles"
                 android:inputType="textMultiLine|textCapSentences"
+                android:maxLength="300"
                 android:minHeight="112dp" />
+
+            <TextView
+                android:id="@+id/btnSugerirIA"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:gravity="center_vertical"
+                android:text="✨ Sugerir descripción con IA"
+                android:textColor="@color/primario"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/btnEliminar"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_opcion"
+                android:gravity="center"
+                android:text="Eliminar tarea"
+                android:textColor="@color/error"
+                android:textStyle="bold"
+                android:visibility="gone" />
         </LinearLayout>
     </ScrollView>
 
-    <!-- Pie con el boton -->
     <Button
         android:id="@+id/btnGuardar"
         style="@style/BotonPrimario"

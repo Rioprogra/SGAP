@@ -5,8 +5,6 @@ import android.graphics.Typeface
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 
-// Pinta los chips de filtro: el elegido azul con letra blanca, los demas blancos.
-// Lo usan Inicio y Grupo.
 object Chips {
     fun pintar(context: Context, chip: TextView, seleccionado: Boolean, colorNormal: Int = R.color.texto_suave) {
         if (seleccionado) {

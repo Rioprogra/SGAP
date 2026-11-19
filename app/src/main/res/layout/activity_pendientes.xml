@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Notificaciones y tareas por entregar (Figma: Pendientes). Se abre con la campana -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -10,7 +9,6 @@
     android:orientation="vertical"
     tools:context=".Pendientes">
 
-    <!-- Barra superior -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -44,7 +42,6 @@
             android:paddingEnd="24dp"
             android:paddingBottom="24dp">
 
-            <!-- Seccion Notificaciones -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -61,14 +58,12 @@
                     android:text="Marcar como leídas" />
             </LinearLayout>
 
-            <!-- Aqui se agregan las notificaciones desde el codigo -->
             <LinearLayout
                 android:id="@+id/contNotificaciones"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical" />
 
-            <!-- Seccion Por entregar -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -86,7 +81,58 @@
                     android:text="Ver todo" />
             </LinearLayout>
 
-            <!-- Aqui se agregan las tareas desde el codigo -->
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/chipTodas"
+                        style="@style/Chip"
+                        android:text="Todas" />
+
+                    <TextView
+                        android:id="@+id/chipTarea"
+                        style="@style/Chip"
+                        android:text="Tarea" />
+
+                    <TextView
+                        android:id="@+id/chipExamen"
+                        style="@style/Chip"
+                        android:text="Examen" />
+
+                    <TextView
+                        android:id="@+id/chipProyecto"
+                        style="@style/Chip"
+                        android:text="Proyecto" />
+
+                    <TextView
+                        android:id="@+id/chipVencidas"
+                        style="@style/Chip"
+                        android:text="Vencidas" />
+
+                    <TextView
+                        android:id="@+id/chipEntregadas"
+                        style="@style/Chip"
+                        android:text="Entregadas" />
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <Spinner
+                android:id="@+id/spFiltroMateria"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_campo"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp" />
+
             <LinearLayout
                 android:id="@+id/contPendientes"
                 android:layout_width="match_parent"
@@ -103,7 +149,6 @@
                 android:textColor="@color/texto_suave"
                 android:visibility="gone" />
 
-            <!-- Para agregar una tarea desde aqui tambien -->
             <TextView
                 android:id="@+id/btnNuevaTarea"
                 android:layout_width="match_parent"

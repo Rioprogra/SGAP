@@ -1,7 +1,5 @@
 package com.sgap.app
 
-// Canales de ejemplo (todavia no hay base de datos).
-// Son los mismos que salen en el Figma.
 object ListaCanales {
     val canales = mutableListOf(
         Canal("avisos-del-salón", "Prof. Ramírez: Mañana no hay clase de Redes", "10:24", 2, "Aviso", R.color.borde, R.color.primario),

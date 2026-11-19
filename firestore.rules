@@ -1,0 +1,128 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function sesion() {
+      return request.auth != null;
+    }
+    function yo() {
+      return request.auth.uid;
+    }
+    function soyMiembro(idGrupo) {
+      return exists(/databases/$(database)/documents/miembros_grupo/$(idGrupo + '_' + yo()))
+        && get(/databases/$(database)/documents/miembros_grupo/$(idGrupo + '_' + yo())).data.estado == 1;
+    }
+    function puedoPublicar(idGrupo) {
+      return soyMiembro(idGrupo)
+        && get(/databases/$(database)/documents/miembros_grupo/$(idGrupo + '_' + yo())).data.rol in ['ADMIN', 'JEFE', 'TUTOR'];
+    }
+
+    match /usuarios/{idUsuario} {
+      allow read, create, update: if sesion() && yo() == idUsuario;
+      allow delete: if false;
+    }
+
+    match /integraciones/{id} {
+      allow read, write: if false;
+    }
+
+    match /grupos/{idGrupo} {
+      allow read: if sesion();
+      allow create: if sesion()
+        && request.resource.data.id_creador == yo()
+        && request.resource.data.total_miembros == 1
+        && request.resource.data.estado == 1;
+      allow update: if sesion()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['total_miembros'])
+        && request.resource.data.total_miembros == resource.data.total_miembros + 1
+        && request.resource.data.total_miembros <= resource.data.cupo;
+      allow delete: if false;
+    }
+
+    match /miembros_grupo/{idMiembro} {
+      allow read: if sesion();
+      allow create, update: if sesion()
+        && request.resource.data.id_usuario == yo()
+        && idMiembro == request.resource.data.id_grupo + '_' + yo()
+        && request.resource.data.estado == 1
+        && (request.resource.data.rol == 'MIEMBRO'
+            || (request.resource.data.rol == 'ADMIN'
+                && getAfter(/databases/$(database)/documents/grupos/$(request.resource.data.id_grupo)).data.id_creador == yo()));
+      allow delete: if false;
+    }
+
+    function tareaValida(t) {
+      return t.titulo is string && t.titulo.size() >= 3 && t.titulo.size() <= 80
+        && t.descripcion is string && t.descripcion.size() <= 300
+        && t.tipo in ['Tarea', 'Examen', 'Proyecto']
+        && t.fecha_entrega is timestamp
+        && (t.get('id_materia', null) == null
+            || exists(/databases/$(database)/documents/materias/$(t.id_materia)));
+    }
+
+    match /tareas/{idTarea} {
+      allow read: if sesion()
+        && (resource.data.id_creador == yo()
+            || (resource.data.id_grupo != null && soyMiembro(resource.data.id_grupo)));
+      allow create: if sesion()
+        && request.resource.data.id_creador == yo()
+        && request.resource.data.estado == 1
+        && tareaValida(request.resource.data)
+        && ((request.resource.data.origen == 'PERSONAL' && request.resource.data.id_grupo == null)
+            || (request.resource.data.origen == 'GRUPO' && puedoPublicar(request.resource.data.id_grupo)));
+      allow update: if sesion() && resource.data.id_creador == yo()
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['titulo', 'tipo', 'descripcion', 'fecha_entrega', 'id_materia', 'estado'])
+        && request.resource.data.estado in [0, 1]
+        && tareaValida(request.resource.data);
+      allow delete: if false;
+    }
+
+    match /asignaciones_tarea/{idAsignacion} {
+      allow read: if sesion() && resource.data.id_usuario == yo();
+      allow create: if sesion()
+        && idAsignacion == request.resource.data.id_tarea + '_' + request.resource.data.id_usuario
+        && (request.resource.data.id_usuario == yo()
+            || getAfter(/databases/$(database)/documents/tareas/$(request.resource.data.id_tarea)).data.id_creador == yo());
+      allow update: if sesion() && resource.data.id_usuario == yo();
+      allow delete: if false;
+    }
+
+    match /avisos/{idAviso} {
+      allow read: if sesion() && soyMiembro(resource.data.id_grupo);
+      allow create: if sesion()
+        && request.resource.data.id_autor == yo()
+        && puedoPublicar(request.resource.data.id_grupo);
+      allow update: if sesion() && resource.data.id_autor == yo();
+      allow delete: if false;
+    }
+
+    match /materias/{id}  { allow read: if sesion(); allow write: if false; }
+    match /docentes/{id}  { allow read: if sesion(); allow write: if false; }
+    match /edificios/{id} { allow read: if sesion(); allow write: if false; }
+    match /aulas/{id}     { allow read: if sesion(); allow write: if false; }
+
+    match /horarios/{idHorario} {
+      allow read, update: if sesion() && resource.data.id_usuario == yo();
+      allow create: if sesion() && request.resource.data.id_usuario == yo();
+      allow delete: if false;
+    }
+
+    match /notificaciones/{idNotificacion} {
+      allow read: if sesion() && resource.data.id_usuario == yo();
+      allow update: if sesion() && resource.data.id_usuario == yo()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['leida']);
+      allow create: if sesion()
+        && request.resource.data.id_tarea != null
+        && getAfter(/databases/$(database)/documents/tareas/$(request.resource.data.id_tarea)).data.id_creador == yo();
+      allow delete: if false;
+    }
+
+    match /dispositivos_usuario/{idDispositivo} {
+      allow read, update: if sesion() && resource.data.id_usuario == yo();
+      allow create: if sesion() && request.resource.data.id_usuario == yo();
+      allow delete: if false;
+    }
+  }
+}

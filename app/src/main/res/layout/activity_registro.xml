@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Pantalla para crear cuenta (no esta en el Figma, usa el mismo estilo del Login) -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -47,13 +46,24 @@
         <TextView
             style="@style/Etiqueta"
             android:layout_marginTop="32dp"
-            android:text="Nombre completo" />
+            android:text="Nombre" />
 
         <EditText
             android:id="@+id/txtNombre"
             style="@style/Campo"
-            android:hint="Ej. Ana López"
-            android:inputType="textPersonName" />
+            android:hint="Ej. Ana"
+            android:inputType="textPersonName|textCapWords" />
+
+        <TextView
+            style="@style/Etiqueta"
+            android:layout_marginTop="16dp"
+            android:text="Apellidos" />
+
+        <EditText
+            android:id="@+id/txtApellidos"
+            style="@style/Campo"
+            android:hint="Ej. López García"
+            android:inputType="textPersonName|textCapWords" />
 
         <TextView
             style="@style/Etiqueta"
@@ -94,7 +104,6 @@
             android:layout_marginTop="24dp"
             android:text="Crear cuenta" />
 
-        <!-- "¿Ya tienes cuenta? Inicia sesión" -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

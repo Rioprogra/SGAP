@@ -10,11 +10,9 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 
-// Adaptador para que cada renglon se vea como la "Tarjeta grupo" del Figma
 class GrupoAdapter(context: Context, val grupos: List<EquipoGrupo>) :
     ArrayAdapter<EquipoGrupo>(context, 0, grupos) {
 
-    // Colores de los circulitos, se van turnando
     val coloresAvatar = listOf(
         R.color.acento_violeta,
         R.color.acento_turquesa,
@@ -44,11 +42,10 @@ class GrupoAdapter(context: Context, val grupos: List<EquipoGrupo>) :
         txtIntegrantes.text = "${grupo.integrantes.size} integrantes"
 
         txtSiglas.text = grupo.siglas()
-        txtSiglas.backgroundTintList = ColorStateList.valueOf(color(grupo.fondoIcono))
-        txtSiglas.setTextColor(color(grupo.colorIcono))
+        txtSiglas.backgroundTintList = ColorStateList.valueOf(color(grupo.fondoIcono()))
+        txtSiglas.setTextColor(color(grupo.colorIcono()))
 
-        // Etiqueta: "Tu equipo" si estas en el grupo, "Con lugar" si todavia caben, si no nada
-        if (grupo.esMio) {
+        if (grupo.esMio()) {
             txtEtiqueta.text = "Tu equipo"
             txtEtiqueta.backgroundTintList = ColorStateList.valueOf(color(R.color.fondo))
             txtEtiqueta.setTextColor(color(R.color.primario))
@@ -62,11 +59,10 @@ class GrupoAdapter(context: Context, val grupos: List<EquipoGrupo>) :
             txtEtiqueta.visibility = View.GONE
         }
 
-        // Circulitos: maximo 4. Si hay mas de 4 integrantes el ultimo dice "+2", "+3", etc.
         val total = grupo.integrantes.size
         for (i in avatares.indices) {
             val avatar = avatares[i]
-            val fondo = avatar.background.mutate() as GradientDrawable // mutate: cada circulo con su propio color
+            val fondo = avatar.background.mutate() as GradientDrawable
 
             if (i >= total) {
                 avatar.visibility = View.GONE

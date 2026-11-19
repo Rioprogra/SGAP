@@ -8,13 +8,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import java.util.Calendar
 
-// Pestana Horario: las clases de cada dia
 class Horario : AppCompatActivity() {
 
     lateinit var lvClases: ListView
     lateinit var txtVacio: TextView
 
-    // Chip de cada dia, en orden de Lunes a Viernes
     lateinit var chips: List<TextView>
     val dias = listOf("Lun", "Mar", "Mié", "Jue", "Vie")
 
@@ -44,7 +42,6 @@ class Horario : AppCompatActivity() {
             }
         }
 
-        // Empieza en el dia de hoy (sabado y domingo muestran el lunes)
         val hoy = Fechas.dias[Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1]
         if (dias.contains(hoy)) {
             diaElegido = hoy

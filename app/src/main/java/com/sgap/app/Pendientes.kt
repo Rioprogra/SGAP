@@ -6,14 +6,18 @@ import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.ImageView
+import android.widget.Spinner
+import androidx.appcompat.app.AlertDialog
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 
-// Pantalla de notificaciones y tareas por entregar (se abre con la campana de Inicio)
 class Pendientes : AppCompatActivity() {
 
     lateinit var contNotificaciones: LinearLayout
@@ -21,8 +25,13 @@ class Pendientes : AppCompatActivity() {
     lateinit var txtVerTodo: TextView
     lateinit var txtSinPendientes: TextView
 
-    // Al principio solo se ven 3 tareas. "Ver todo" muestra las demas y las entregadas
     var verTodo = false
+
+    var filtro = "Todas"
+    lateinit var chips: List<TextView>
+
+    lateinit var spFiltroMateria: Spinner
+    var idMateriaFiltro: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,9 +49,7 @@ class Pendientes : AppCompatActivity() {
         btnRegresar.setOnClickListener { finish() }
 
         txtMarcarLeidas.setOnClickListener {
-            for (notificacion in ListaNotificaciones.notificaciones) {
-                notificacion.leida = true
-            }
+            BaseDatos.marcarTodasLeidas()
             mostrarNotificaciones()
         }
 
@@ -54,17 +61,91 @@ class Pendientes : AppCompatActivity() {
         btnNuevaTarea.setOnClickListener {
             startActivity(Intent(this, NuevaTarea::class.java))
         }
+
+        chips = listOf(
+            findViewById(R.id.chipTodas), findViewById(R.id.chipTarea),
+            findViewById(R.id.chipExamen), findViewById(R.id.chipProyecto),
+            findViewById(R.id.chipVencidas), findViewById(R.id.chipEntregadas)
+        )
+        for (chip in chips) {
+            chip.setOnClickListener {
+                filtro = chip.text.toString()
+                pintarChips()
+                mostrarPendientes()
+            }
+        }
+        pintarChips()
+
+        spFiltroMateria = findViewById(R.id.spFiltroMateria)
+        llenarFiltroMateria()
+        spFiltroMateria.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                if (position == 0) {
+                    idMateriaFiltro = null
+                } else {
+                    idMateriaFiltro = ListaMaterias.materias[position - 1].id
+                }
+                mostrarPendientes()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+        BaseDatos.cargarMaterias {
+            llenarFiltroMateria()
+            mostrarPendientes()
+        }
     }
 
-    // Se recarga al regresar de Nueva tarea
+    fun llenarFiltroMateria() {
+        val opciones = mutableListOf("Todas las materias")
+        for (materia in ListaMaterias.materias) {
+            opciones.add(materia.nombre)
+        }
+        val adaptador = ArrayAdapter(this, android.R.layout.simple_spinner_item, opciones)
+        adaptador.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spFiltroMateria.adapter = adaptador
+    }
+
+    fun pintarChips() {
+        for (chip in chips) {
+            if (chip.id == R.id.chipVencidas) {
+                Chips.pintar(this, chip, filtro == chip.text.toString(), R.color.error)
+            } else {
+                Chips.pintar(this, chip, filtro == chip.text.toString())
+            }
+        }
+    }
+
+    fun pasaFiltro(tarea: Tarea): Boolean {
+        if (idMateriaFiltro != null && tarea.idMateria != idMateriaFiltro) return false
+        return when (filtro) {
+            "Vencidas" -> tarea.vencida()
+            "Entregadas" -> tarea.completada
+            "Tarea", "Examen", "Proyecto" -> tarea.tipo == filtro && (verTodo || !tarea.completada)
+            else -> verTodo || !tarea.completada
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         mostrarNotificaciones()
         mostrarPendientes()
+
+        BaseDatos.cargarNotificaciones { mostrarNotificaciones() }
+
+        BaseDatos.cargarTareas(this) { error ->
+            if (error != null) {
+                Toast.makeText(this, "No se pudieron cargar las tareas: $error", Toast.LENGTH_LONG).show()
+            }
+            mostrarPendientes()
+            Recordatorios.programarTodas(this)
+            if (BaseDatos.sinConexion) {
+                Toast.makeText(this, "Sin conexión: se muestran tus datos guardados", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     fun mostrarNotificaciones() {
-        // Borramos lo que habia y volvemos a crear una tarjeta por notificacion
         contNotificaciones.removeAllViews()
 
         for (notificacion in ListaNotificaciones.notificaciones) {
@@ -75,11 +156,11 @@ class Pendientes : AppCompatActivity() {
             val txtHace = vista.findViewById<TextView>(R.id.txtHace)
             val puntoNoLeida = vista.findViewById<View>(R.id.puntoNoLeida)
 
-            txtIcono.text = notificacion.icono
-            txtIcono.setTextColor(color(notificacion.colorIcono))
-            txtIcono.backgroundTintList = ColorStateList.valueOf(color(notificacion.fondoIcono))
-            txtTexto.text = notificacion.texto
-            txtHace.text = notificacion.hace
+            txtIcono.text = notificacion.icono()
+            txtIcono.setTextColor(color(notificacion.colorIcono()))
+            txtIcono.backgroundTintList = ColorStateList.valueOf(color(notificacion.fondoIcono()))
+            txtTexto.text = "${notificacion.titulo}: ${notificacion.mensaje}"
+            txtHace.text = notificacion.hace()
 
             if (notificacion.leida) {
                 puntoNoLeida.visibility = View.INVISIBLE
@@ -87,9 +168,8 @@ class Pendientes : AppCompatActivity() {
                 puntoNoLeida.visibility = View.VISIBLE
             }
 
-            // Al tocarla se marca como leida
             vista.setOnClickListener {
-                notificacion.leida = true
+                BaseDatos.marcarLeida(notificacion)
                 puntoNoLeida.visibility = View.INVISIBLE
             }
 
@@ -100,14 +180,13 @@ class Pendientes : AppCompatActivity() {
     fun mostrarPendientes() {
         contPendientes.removeAllViews()
 
-        // Primero las que faltan (la que vence primero arriba), al final las entregadas
-        val ordenadas = ListaTareas.tareas.sortedWith(compareBy({ it.completada }, { it.fechaOrden }))
+        val ordenadas = ListaTareas.tareas.sortedWith(compareBy({ it.completada }, { it.fechaEntrega }))
 
+        val sinFiltros = filtro == "Todas" && idMateriaFiltro == null
         var mostradas = 0
         for (tarea in ordenadas) {
-            if (!verTodo && (tarea.completada || mostradas == 3)) {
-                continue
-            }
+            if (!pasaFiltro(tarea)) continue
+            if (sinFiltros && !verTodo && mostradas == 3) continue
             contPendientes.addView(crearTarjeta(tarea))
             mostradas++
         }
@@ -119,6 +198,13 @@ class Pendientes : AppCompatActivity() {
         }
 
         if (mostradas == 0) {
+            if (ListaTareas.tareas.isEmpty()) {
+                txtSinPendientes.text = "Aún no tienes tareas. Agrega una con \"+ Nueva tarea\""
+            } else if (sinFiltros) {
+                txtSinPendientes.text = "No tienes nada por entregar 🎉"
+            } else {
+                txtSinPendientes.text = "No hay tareas con ese filtro"
+            }
             txtSinPendientes.visibility = View.VISIBLE
         } else {
             txtSinPendientes.visibility = View.GONE
@@ -136,28 +222,74 @@ class Pendientes : AppCompatActivity() {
 
         txtTitulo.text = tarea.titulo
         txtTipo.text = tarea.tipo
-        txtFecha.text = tarea.fecha
+        var detalle = tarea.fecha()
+        if (tarea.nombreMateria() != "") detalle += " · ${tarea.nombreMateria()}"
+        if (tarea.vencida()) {
+            txtFecha.text = "Vencida · $detalle"
+            txtFecha.setTextColor(color(R.color.error))
+        } else {
+            txtFecha.text = detalle
+        }
 
-        // Colores segun el tipo: Tarea morado, Examen rojo, Proyecto verde
+        vista.setOnClickListener { mostrarDetalle(tarea) }
+
         barraTipo.backgroundTintList = ColorStateList.valueOf(color(tarea.color()))
         txtTipo.setTextColor(color(tarea.color()))
         txtTipo.backgroundTintList = ColorStateList.valueOf(color(tarea.colorSuave()))
 
         if (tarea.completada) {
             imgCheck.setImageResource(R.drawable.ic_check_lleno)
-            txtTitulo.paintFlags = txtTitulo.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG // texto tachado
+            txtTitulo.paintFlags = txtTitulo.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
             vista.alpha = 0.6f
         } else {
             imgCheck.setImageResource(R.drawable.ic_check_vacio)
         }
 
-        // El circulo marca o desmarca la tarea como entregada
         imgCheck.setOnClickListener {
             tarea.completada = !tarea.completada
+            BaseDatos.cambiarCompletada(tarea)
+            Recordatorios.programar(this, tarea)
             mostrarPendientes()
         }
 
         return vista
+    }
+
+    fun mostrarDetalle(tarea: Tarea) {
+        var mensaje = "Tipo: ${tarea.tipo}\n"
+        mensaje += "Entrega: ${tarea.fecha()}\n"
+        if (tarea.nombreMateria() != "") mensaje += "Materia: ${tarea.nombreMateria()}\n"
+        if (tarea.origen == "GRUPO") mensaje += "Es de un grupo\n"
+        if (tarea.completada) {
+            mensaje += "Estado: Entregada\n"
+        } else if (tarea.vencida()) {
+            mensaje += "Estado: Vencida\n"
+        } else {
+            mensaje += "Estado: Pendiente\n"
+        }
+        if (tarea.descripcion != "") mensaje += "\n${tarea.descripcion}"
+
+        val dialogo = AlertDialog.Builder(this)
+            .setTitle(tarea.titulo)
+            .setMessage(mensaje)
+            .setNegativeButton("Cerrar", null)
+
+        val textoEntregar = if (tarea.completada) "Marcar pendiente" else "Marcar entregada"
+        dialogo.setNeutralButton(textoEntregar) { _, _ ->
+            tarea.completada = !tarea.completada
+            BaseDatos.cambiarCompletada(tarea)
+            Recordatorios.programar(this, tarea)
+            mostrarPendientes()
+        }
+
+        if (tarea.idCreador == BaseDatos.uid()) {
+            dialogo.setPositiveButton("Editar") { _, _ ->
+                val intent = Intent(this, NuevaTarea::class.java)
+                intent.putExtra("idTarea", tarea.id)
+                startActivity(intent)
+            }
+        }
+        dialogo.show()
     }
 
     fun color(id: Int): Int {

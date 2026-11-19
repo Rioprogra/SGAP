@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primario">#5B86AD</color>
+    <color name="sobre_primario">#FFFFFF</color>
+    <color name="texto">#E6EEF5</color>
+    <color name="texto_suave">#A9C1D6</color>
+    <color name="placeholder">#6E8BA5</color>
+    <color name="superficie">#1B2A3A</color>
+    <color name="borde">#2E4257</color>
+    <color name="fondo">#101B27</color>
+
+    <color name="secundario">#8AA9C4</color>
+    <color name="error">#F07070</color>
+
+    <color name="acento_violeta_suave">#2D2552</color>
+    <color name="acento_turquesa_suave">#123B37</color>
+    <color name="acento_coral_suave">#4A1E26</color>
+    <color name="acento_ambar_suave">#4A3A15</color>
+</resources>

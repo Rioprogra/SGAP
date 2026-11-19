@@ -1,9 +1,7 @@
 package com.sgap.app
 
-// Horario de ejemplo del 5°A. Todavia no hay base de datos.
 object ListaHorario {
 
-    // Cada materia con su color, para que se vea igual todos los dias
     val bd = R.color.acento_violeta
     val ed = R.color.acento_coral
     val app = R.color.acento_turquesa

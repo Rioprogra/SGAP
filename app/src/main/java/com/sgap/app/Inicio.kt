@@ -1,6 +1,11 @@
 package com.sgap.app
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import android.os.Bundle
 import android.view.View
 import android.widget.FrameLayout
@@ -13,7 +18,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-// Pantalla principal: lista de canales del salon
 class Inicio : AppCompatActivity() {
 
     lateinit var lvCanales: ListView
@@ -24,10 +28,8 @@ class Inicio : AppCompatActivity() {
     lateinit var chipMaterias: TextView
     lateinit var chipAvisos: TextView
 
-    // Filtro elegido: "Todos", "No leídos", "Materias" o "Avisos"
     var filtro = "Todos"
 
-    // Los canales que se ven en la lista segun el filtro
     var canalesFiltrados = mutableListOf<Canal>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,21 +48,16 @@ class Inicio : AppCompatActivity() {
         chipMaterias = findViewById(R.id.chipMaterias)
         chipAvisos = findViewById(R.id.chipAvisos)
 
-        // Fecha de hoy arriba, con la primera letra en mayuscula
         val formato = SimpleDateFormat("EEEE d 'de' MMMM", Locale("es", "MX"))
         txtFecha.text = formato.format(Date()).replaceFirstChar { it.uppercase() }
 
-        // Barra de abajo
         Navegacion.configurar(this, R.id.navInicio)
 
-        // Chips de filtro
         chipTodos.setOnClickListener { cambiarFiltro("Todos") }
         chipNoLeidos.setOnClickListener { cambiarFiltro("No leídos") }
         chipMaterias.setOnClickListener { cambiarFiltro("Materias") }
         chipAvisos.setOnClickListener { cambiarFiltro("Avisos") }
 
-        // Al tocar un canal se marcan sus mensajes como leidos
-        // (la pantalla del chat todavia no esta en el Figma)
         lvCanales.setOnItemClickListener { _, _, position, _ ->
             val canal = canalesFiltrados[position]
             canal.noLeidos = 0
@@ -68,25 +65,35 @@ class Inicio : AppCompatActivity() {
             mostrarCanales()
         }
 
-        // La campana abre Pendientes (notificaciones y tareas por entregar)
         btnNotificaciones.setOnClickListener {
             startActivity(Intent(this, Pendientes::class.java))
         }
 
-        // El "+" abre Nueva tarea
         btnAgregar.setOnClickListener {
             startActivity(Intent(this, NuevaTarea::class.java))
         }
 
         pintarChips()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
+        }
     }
 
-    // Cuando regresamos de otra pantalla se vuelve a cargar la lista
     override fun onResume() {
         super.onResume()
         mostrarCanales()
 
-        // El puntito rojo de la campana solo sale si hay notificaciones sin leer
+        pintarCampana()
+        BaseDatos.cargarNotificaciones { pintarCampana() }
+
+        BaseDatos.cargarTareas(this) { Recordatorios.programarTodas(this) }
+    }
+
+    fun pintarCampana() {
         if (ListaNotificaciones.hayNoLeidas()) {
             puntoAviso.visibility = View.VISIBLE
         } else {
@@ -121,10 +128,9 @@ class Inicio : AppCompatActivity() {
         }
     }
 
-    // El chip elegido se pinta azul y los demas blancos
     fun pintarChips() {
         Chips.pintar(this, chipTodos, filtro == "Todos")
-        Chips.pintar(this, chipNoLeidos, filtro == "No leídos", R.color.acento_rojo) // en el Figma va en rojo
+        Chips.pintar(this, chipNoLeidos, filtro == "No leídos", R.color.acento_rojo)
         Chips.pintar(this, chipMaterias, filtro == "Materias")
         Chips.pintar(this, chipAvisos, filtro == "Avisos")
     }

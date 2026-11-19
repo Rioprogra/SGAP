@@ -9,7 +9,6 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 
-// Adaptador para cada clase del horario (layout item_clase.xml)
 class ClaseAdapter(context: Context, val clases: List<Clase>) :
     ArrayAdapter<Clase>(context, 0, clases) {
 

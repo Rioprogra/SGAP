@@ -1,22 +1,45 @@
 package com.sgap.app
 
-// Un equipo de proyecto o grupo de estudio del salon.
-// (Se llama EquipoGrupo para no chocar con la pantalla Grupo)
 data class EquipoGrupo(
+    var id: String,
     var nombre: String,
-    var tipo: String,                  // "Proyecto" o "Estudio"
+    var descripcion: String,
+    var tipo: String,
     var materia: String,
-    var integrantes: MutableList<String>, // iniciales de cada integrante, ej. "LV"
-    var cupo: Int,                     // cuantos caben como maximo
-    var esMio: Boolean,                // true si tu estas en este grupo
-    var fondoIcono: Int,               // color del cuadrito con las siglas
-    var colorIcono: Int
+    var cupo: Int,
+    var codigoAcceso: String,
+    var idCreador: String
 ) {
+    var integrantes = mutableListOf<String>()
+    var miembrosUid = mutableListOf<String>()
+    var miRol: String? = null
+
     fun tieneLugar(): Boolean {
         return integrantes.size < cupo
     }
 
-    // "Club de Algoritmos" -> "CA" (se salta palabras cortas como "de")
+    fun esMio(): Boolean {
+        return miRol != null
+    }
+
+    fun puedoPublicar(): Boolean {
+        return miRol == "ADMIN" || miRol == "JEFE" || miRol == "TUTOR"
+    }
+
+    fun color(): Int {
+        return Math.abs(id.hashCode()) % 4
+    }
+
+    fun fondoIcono(): Int {
+        if (color() == 1 || color() == 3) return R.color.borde
+        return R.color.fondo
+    }
+
+    fun colorIcono(): Int {
+        if (color() == 1 || color() == 2) return R.color.texto
+        return R.color.primario
+    }
+
     fun siglas(): String {
         var resultado = ""
         for (palabra in nombre.split(" ")) {
@@ -24,6 +47,7 @@ data class EquipoGrupo(
                 resultado += palabra[0].uppercaseChar()
             }
         }
+        if (resultado.isEmpty()) resultado = nombre.take(2).uppercase()
         return resultado
     }
 }

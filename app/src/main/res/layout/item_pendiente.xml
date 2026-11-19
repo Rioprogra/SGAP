@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Una tarea/examen/proyecto por entregar (Figma: Tarjeta pendiente) -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -12,7 +11,6 @@
     android:paddingEnd="16dp"
     android:paddingBottom="14dp">
 
-    <!-- Rayita de color segun el tipo -->
     <View
         android:id="@+id/barraTipo"
         android:layout_width="4dp"
@@ -64,7 +62,6 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Circulo para marcar como entregada -->
     <ImageView
         android:id="@+id/imgCheck"
         android:layout_width="40dp"

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Pantalla de inicio de sesion (Figma: Login) -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -17,7 +16,6 @@
         android:orientation="vertical"
         android:padding="24dp">
 
-        <!-- Marca: logo, nombre y lema -->
         <ImageView
             android:layout_width="120dp"
             android:layout_height="100dp"
@@ -25,7 +23,6 @@
             android:contentDescription="Logo de StudyGest"
             android:src="@drawable/logo_studygest" />
 
-        <!-- "Study" oscuro y "Gest" azul claro -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -61,7 +58,6 @@
             android:textColor="@color/texto_suave"
             android:textSize="14sp" />
 
-        <!-- Formulario -->
         <TextView
             style="@style/Etiqueta"
             android:layout_marginTop="40dp"
@@ -101,7 +97,6 @@
             android:layout_marginTop="24dp"
             android:text="Iniciar sesión" />
 
-        <!-- "¿No tienes cuenta? Regístrate" -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

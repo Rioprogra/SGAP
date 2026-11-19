@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Una notificacion (Figma: Notificación) -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -45,7 +44,6 @@
             android:textSize="12sp" />
     </LinearLayout>
 
-    <!-- Puntito morado: todavia no la lees -->
     <View
         android:id="@+id/puntoNoLeida"
         android:layout_width="8dp"

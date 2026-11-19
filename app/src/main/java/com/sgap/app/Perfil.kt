@@ -7,8 +7,10 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.work.WorkManager
+import com.google.android.material.materialswitch.MaterialSwitch
+import com.google.firebase.auth.FirebaseAuth
 
-// Pestana Perfil: tus datos, numeritos y cerrar sesion
 class Perfil : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,29 +30,43 @@ class Perfil : AppCompatActivity() {
         txtCorreo.text = Usuario.correo
         txtIniciales.text = Usuario.iniciales()
 
+        findViewById<TextView>(R.id.btnProgreso).setOnClickListener {
+            startActivity(Intent(this, Progreso::class.java))
+        }
+
+        val swModoOscuro = findViewById<MaterialSwitch>(R.id.swModoOscuro)
+        swModoOscuro.isChecked = Tema.esOscuro(this)
+        swModoOscuro.setOnCheckedChangeListener { _, activado ->
+            Tema.cambiar(this, activado)
+        }
+
         datoPendientes.setOnClickListener { abrirPendientes() }
         btnMisPendientes.setOnClickListener { abrirPendientes() }
 
         btnCerrarSesion.setOnClickListener {
-            // Regresa al login y borra las pantallas de atras
-            // para que con "atras" no se pueda volver a entrar
+            FirebaseAuth.getInstance().signOut()
+            WorkManager.getInstance(this).cancelAllWork()
+            ListaTareas.tareas.clear()
+            ListaGrupos.grupos.clear()
+            ListaNotificaciones.notificaciones.clear()
+
             val intent = Intent(this, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
         }
     }
 
-    // Los numeros se actualizan al regresar de Pendientes
     override fun onResume() {
         super.onResume()
+        mostrarNumeros()
 
-        var misGrupos = 0
-        for (grupo in ListaGrupos.grupos) {
-            if (grupo.esMio) misGrupos++
-        }
+        BaseDatos.cargarTareas(this) { mostrarNumeros() }
+        BaseDatos.cargarGrupos { mostrarNumeros() }
+    }
 
+    fun mostrarNumeros() {
         findViewById<TextView>(R.id.txtNumPendientes).text = ListaTareas.pendientes().toString()
-        findViewById<TextView>(R.id.txtNumGrupos).text = misGrupos.toString()
+        findViewById<TextView>(R.id.txtNumGrupos).text = ListaGrupos.misGrupos().toString()
         findViewById<TextView>(R.id.txtNumCanales).text = ListaCanales.canales.size.toString()
     }
 

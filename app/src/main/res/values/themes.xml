@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.StudyGest" parent="Theme.Material3.Light.NoActionBar">
+    <style name="Theme.StudyGest" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/primario</item>
         <item name="colorOnPrimary">@color/sobre_primario</item>
         <item name="colorSecondary">@color/secundario</item>
@@ -10,7 +10,6 @@
         <item name="android:datePickerDialogTheme">@style/Calendario</item>
     </style>
 
-    <!-- Calendario de Nueva tarea: encabezado y dia elegido en el azul de la app -->
     <style name="Calendario" parent="ThemeOverlay.Material3.Dialog">
         <item name="android:colorAccent">@color/primario</item>
         <item name="colorAccent">@color/primario</item>
@@ -18,9 +17,6 @@
         <item name="colorSecondary">@color/primario</item>
     </style>
 
-    <!-- Estilos que se repiten en varias pantallas -->
-
-    <!-- Texto chiquito arriba de cada campo (ej. "Correo institucional") -->
     <style name="Etiqueta">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -30,7 +26,6 @@
         <item name="android:fontFamily">sans-serif-medium</item>
     </style>
 
-    <!-- Caja blanca con borde para escribir -->
     <style name="Campo">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -45,7 +40,6 @@
         <item name="android:textSize">15sp</item>
     </style>
 
-    <!-- Boton azul grande (Iniciar sesion, Guardar tarea, etc.) -->
     <style name="BotonPrimario" parent="Widget.Material3.Button">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">52dp</item>
@@ -59,7 +53,6 @@
         <item name="cornerRadius">14dp</item>
     </style>
 
-    <!-- Chip de filtro (Todos, No leidos, ...). El color se cambia desde el codigo -->
     <style name="Chip">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -74,7 +67,6 @@
         <item name="android:fontFamily">sans-serif-medium</item>
     </style>
 
-    <!-- Cada pestana de la barra de abajo -->
     <style name="NavBoton">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
@@ -100,7 +92,6 @@
         <item name="android:fontFamily">sans-serif-medium</item>
     </style>
 
-    <!-- Circulito con las iniciales de un integrante -->
     <style name="Avatar">
         <item name="android:layout_width">28dp</item>
         <item name="android:layout_height">28dp</item>
@@ -111,7 +102,6 @@
         <item name="android:textStyle">bold</item>
     </style>
 
-    <!-- Boton de opcion (Tipo: Tarea / Examen / Proyecto) -->
     <style name="Opcion">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
@@ -125,7 +115,6 @@
         <item name="android:fontFamily">sans-serif-medium</item>
     </style>
 
-    <!-- Flecha para regresar y titulo de las pantallas sin barra de abajo -->
     <style name="Regresar">
         <item name="android:layout_width">40dp</item>
         <item name="android:layout_height">40dp</item>
@@ -146,7 +135,6 @@
         <item name="android:textStyle">bold</item>
     </style>
 
-    <!-- Titulo de seccion ("Notificaciones", "Por entregar") y su link de la derecha -->
     <style name="TituloSeccion">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
@@ -167,7 +155,6 @@
         <item name="android:textStyle">bold</item>
     </style>
 
-    <!-- Cuadritos con numeros del Perfil -->
     <style name="Dato">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
@@ -195,7 +182,6 @@
         <item name="android:textSize">12sp</item>
     </style>
 
-    <!-- Encabezado de las pantallas con barra de abajo -->
     <style name="Subtitulo">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>

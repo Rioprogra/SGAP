@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Barra de abajo (Inicio, Grupo, Horario, Perfil).
-     Se agrega a cada pantalla con <include layout="@layout/barra_navegacion" />
-     y se activa con Navegacion.configurar(this, R.id.navInicio) -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
