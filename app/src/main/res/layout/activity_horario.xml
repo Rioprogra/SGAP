@@ -4,19 +4,14 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/fondo"
+    android:background="@drawable/bg_pantalla"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
     tools:context=".Horario">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingStart="24dp"
-        android:paddingTop="16dp"
-        android:paddingEnd="24dp"
-        android:paddingBottom="8dp">
+        style="@style/Encabezado"
+        android:orientation="vertical">
 
         <TextView
             style="@style/Subtitulo"
@@ -82,11 +77,8 @@
 
         <TextView
             android:id="@+id/txtVacio"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            style="@style/EstadoVacio"
             android:text="No hay clases este día"
-            android:textColor="@color/texto_suave"
             android:visibility="gone" />
     </FrameLayout>
 

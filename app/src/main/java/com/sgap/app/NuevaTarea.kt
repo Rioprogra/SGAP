@@ -1,6 +1,8 @@
 package com.sgap.app
 
 import android.app.DatePickerDialog
+import android.content.Intent
+import android.net.Uri
 import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
@@ -8,9 +10,12 @@ import androidx.appcompat.app.AlertDialog
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import android.graphics.Color
+import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -38,7 +43,7 @@ class NuevaTarea : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        enableEdgeToEdge(SystemBarStyle.dark(Color.TRANSPARENT))
         setContentView(R.layout.activity_nueva_tarea)
 
         val btnRegresar = findViewById<TextView>(R.id.btnRegresar)
@@ -161,32 +166,106 @@ class NuevaTarea : AppCompatActivity() {
                 BaseDatos.guardarTarea(tarea, grupo)
                 Recordatorios.programar(this, tarea)
                 Toast.makeText(this, "Se guardó: $titulo", Toast.LENGTH_SHORT).show()
+                if (grupo != null) {
+                    enviarCorreo(grupo, tarea)
+                }
                 finish()
             }
         }
 
-        val btnSugerirIA = findViewById<TextView>(R.id.btnSugerirIA)
-        btnSugerirIA.setOnClickListener {
+        val btnSugerirIA = findViewById<Button>(R.id.btnSugerirIA)
+        val btnPrioridadIA = findViewById<Button>(R.id.btnPrioridadIA)
+        val btnPlanIA = findViewById<Button>(R.id.btnPlanIA)
+        val btnUsarResultado = findViewById<Button>(R.id.btnUsarResultado)
+        val txtResultadoIA = findViewById<TextView>(R.id.txtResultadoIA)
+        val progresoIA = findViewById<ProgressBar>(R.id.progresoIA)
+        val botonesIA = listOf(btnSugerirIA, btnPrioridadIA, btnPlanIA)
+
+        fun usarIA(accion: String) {
             val titulo = txtTitulo.text.toString().trim()
             if (titulo.isEmpty()) {
-                Toast.makeText(this, "Escribe primero el título", Toast.LENGTH_SHORT).show()
-            } else {
-                btnSugerirIA.isEnabled = false
-                btnSugerirIA.text = "Pensando..."
-                lifecycleScope.launch {
-                    try {
-                        txtDescripcion.setText(AsistenteIA.sugerirDescripcion(titulo, tipo))
-                    } catch (e: Exception) {
-                        Toast.makeText(this@NuevaTarea, "No se pudo usar la IA: ${e.message}", Toast.LENGTH_LONG).show()
-                    }
-                    btnSugerirIA.isEnabled = true
-                    btnSugerirIA.text = "✨ Sugerir descripción con IA"
-                }
+                txtTitulo.error = "Escribe primero el título"
+                txtTitulo.requestFocus()
+                return
             }
+            val elegida = fecha
+            val textoFecha = if (elegida != null) Fechas.corta(elegida) + " ${elegida.get(Calendar.YEAR)}" else "sin fecha"
+            for (b in botonesIA) b.isEnabled = false
+            progresoIA.visibility = View.VISIBLE
+            btnUsarResultado.visibility = View.GONE
+            txtResultadoIA.visibility = View.VISIBLE
+            txtResultadoIA.text = "Gemini está pensando..."
+            lifecycleScope.launch {
+                try {
+                    when (accion) {
+                        "descripcion" -> {
+                            val descripcion = AsistenteIA.sugerirDescripcion(titulo, tipo)
+                            txtDescripcion.setText(descripcion)
+                            txtResultadoIA.text = "✓ Listo, agregué la descripción arriba."
+                        }
+                        "prioridad" -> {
+                            txtResultadoIA.text = AsistenteIA.sugerirPrioridad(titulo, tipo, textoFecha)
+                            btnUsarResultado.visibility = View.VISIBLE
+                        }
+                        else -> {
+                            txtResultadoIA.text = AsistenteIA.planDeEstudio(titulo, tipo, textoFecha)
+                            btnUsarResultado.visibility = View.VISIBLE
+                        }
+                    }
+                } catch (e: Exception) {
+                    txtResultadoIA.text = "⚠️ " + AsistenteIA.mensajeError(e)
+                }
+                for (b in botonesIA) b.isEnabled = true
+                progresoIA.visibility = View.GONE
+            }
+        }
+
+        btnSugerirIA.setOnClickListener { usarIA("descripcion") }
+        btnPrioridadIA.setOnClickListener { usarIA("prioridad") }
+        btnPlanIA.setOnClickListener { usarIA("plan") }
+        btnUsarResultado.setOnClickListener {
+            val actual = txtDescripcion.text.toString().trim()
+            val nuevo = txtResultadoIA.text.toString()
+            val combinado = if (actual.isEmpty()) nuevo else actual + "\n\n" + nuevo
+            txtDescripcion.setText(combinado.take(300))
+            btnUsarResultado.visibility = View.GONE
+            Toast.makeText(this, "Agregado a la descripción", Toast.LENGTH_SHORT).show()
         }
 
         btnRegresar.setOnClickListener {
             finish()
+        }
+    }
+
+    fun enviarCorreo(grupo: EquipoGrupo, tarea: Tarea) {
+        val destinatarios = mutableListOf<String>()
+        for (correo in grupo.correos) {
+            if (correo != Usuario.correo.lowercase() && !destinatarios.contains(correo)) {
+                destinatarios.add(correo)
+            }
+        }
+        if (destinatarios.isEmpty()) {
+            Toast.makeText(this, "Nadie más del grupo tiene correo registrado todavía", Toast.LENGTH_LONG).show()
+            return
+        }
+
+        var cuerpo = "Hola, se publicó una nueva actividad en el grupo ${grupo.nombre}.\n\n"
+        cuerpo += "${tarea.tipo}: ${tarea.titulo}\n"
+        cuerpo += "Entrega: ${tarea.fecha()}\n"
+        if (tarea.nombreMateria() != "") cuerpo += "Materia: ${tarea.nombreMateria()}\n"
+        if (tarea.descripcion != "") cuerpo += "\n${tarea.descripcion}\n"
+        cuerpo += "\nÁbrela en StudyGest para ver los detalles."
+
+        val correo = Intent(Intent.ACTION_SEND)
+        correo.putExtra(Intent.EXTRA_EMAIL, destinatarios.toTypedArray())
+        correo.putExtra(Intent.EXTRA_SUBJECT, "Nueva ${tarea.tipo.lowercase()} en ${grupo.nombre}: ${tarea.titulo}")
+        correo.putExtra(Intent.EXTRA_TEXT, cuerpo)
+        correo.selector = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:"))
+
+        try {
+            startActivity(Intent.createChooser(correo, "Avisar por correo al grupo"))
+        } catch (e: Exception) {
+            Toast.makeText(this, "No hay una app de correo instalada", Toast.LENGTH_LONG).show()
         }
     }
 

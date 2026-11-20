@@ -1,22 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/fondo"
+    android:background="@drawable/bg_pantalla"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
     tools:context=".Perfil">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingStart="24dp"
-        android:paddingTop="16dp"
-        android:paddingEnd="24dp"
-        android:paddingBottom="8dp">
+        style="@style/Encabezado"
+        android:orientation="vertical">
 
         <TextView
             style="@style/Subtitulo"
@@ -45,20 +41,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_tarjeta"
+                android:elevation="4dp"
                 android:gravity="center_horizontal"
                 android:orientation="vertical"
-                android:padding="20dp">
+                android:padding="24dp">
 
                 <TextView
                     android:id="@+id/txtIniciales"
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
-                    android:background="@drawable/bg_circulo"
-                    android:backgroundTint="@color/primario"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:background="@drawable/bg_gemini_circulo"
+                    android:elevation="4dp"
                     android:gravity="center"
                     android:textColor="@color/sobre_primario"
-                    android:textSize="22sp"
-                    android:textStyle="bold"
+                    android:textSize="28sp"
+                    android:fontFamily="sans-serif-black"
                     tools:text="AL" />
 
                 <TextView
@@ -85,13 +82,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:background="@drawable/bg_etiqueta"
-                    android:backgroundTint="@color/fondo"
+                    android:backgroundTint="@color/secundario_suave"
                     android:paddingStart="10dp"
                     android:paddingTop="4dp"
                     android:paddingEnd="10dp"
                     android:paddingBottom="4dp"
                     android:text="Ingeniería en Software · 5°A"
-                    android:textColor="@color/primario"
+                    android:textColor="@color/secundario"
                     android:textSize="12sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -148,14 +145,20 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:background="@drawable/bg_tarjeta"
+                android:drawableStart="@drawable/ic_lista"
+                android:drawableEnd="@drawable/ic_flecha"
+                android:drawablePadding="14dp"
+                android:drawableTint="@color/primario"
+                android:elevation="2dp"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center_vertical"
                 android:paddingStart="16dp"
-                android:paddingTop="16dp"
+                android:paddingTop="18dp"
                 android:paddingEnd="16dp"
-                android:paddingBottom="16dp"
-                android:text="Ver mis pendientes  →"
+                android:paddingBottom="18dp"
+                android:text="Mis pendientes"
                 android:textColor="@color/texto"
-                android:textSize="15sp"
-                android:fontFamily="sans-serif-medium" />
+                android:textSize="15sp" />
 
             <TextView
                 android:id="@+id/btnProgreso"
@@ -163,31 +166,63 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:background="@drawable/bg_tarjeta"
+                android:drawableStart="@drawable/ic_grafica"
+                android:drawableEnd="@drawable/ic_flecha"
+                android:drawablePadding="14dp"
+                android:drawableTint="@color/primario"
+                android:elevation="2dp"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center_vertical"
                 android:paddingStart="16dp"
-                android:paddingTop="16dp"
+                android:paddingTop="18dp"
                 android:paddingEnd="16dp"
-                android:paddingBottom="16dp"
-                android:text="Progreso por materia  →"
+                android:paddingBottom="18dp"
+                android:text="Progreso por materia"
                 android:textColor="@color/texto"
-                android:textSize="15sp"
-                android:fontFamily="sans-serif-medium" />
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/btnAsistentePerfil"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_tarjeta"
+                android:drawableStart="@drawable/ic_chispa"
+                android:drawableEnd="@drawable/ic_flecha"
+                android:drawablePadding="14dp"
+                android:drawableTint="@color/primario"
+                android:elevation="2dp"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center_vertical"
+                android:paddingStart="16dp"
+                android:paddingTop="18dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="18dp"
+                android:text="Asistente IA con Gemini"
+                android:textColor="@color/texto"
+                android:textSize="15sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:background="@drawable/bg_tarjeta"
+                android:elevation="2dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="16dp"
-                android:paddingTop="4dp"
+                android:paddingTop="6dp"
                 android:paddingEnd="12dp"
-                android:paddingBottom="4dp">
+                android:paddingBottom="6dp">
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:drawableStart="@drawable/ic_luna"
+                    android:drawablePadding="14dp"
+                    android:drawableTint="@color/primario"
+                    android:gravity="center_vertical"
                     android:fontFamily="sans-serif-medium"
                     android:text="Modo oscuro"
                     android:textColor="@color/texto"
@@ -199,11 +234,20 @@
                     android:layout_height="wrap_content" />
             </LinearLayout>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnCerrarSesion"
-                style="@style/BotonPrimario"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
                 android:layout_marginTop="24dp"
-                android:text="Cerrar sesión" />
+                android:text="Cerrar sesión"
+                android:textAllCaps="false"
+                android:textColor="@color/error"
+                app:cornerRadius="16dp"
+                app:icon="@drawable/ic_salir"
+                app:iconGravity="textStart"
+                app:iconTint="@color/error"
+                app:strokeColor="@color/error" />
         </LinearLayout>
     </ScrollView>
 

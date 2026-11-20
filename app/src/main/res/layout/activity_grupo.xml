@@ -4,19 +4,14 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/fondo"
+    android:background="@drawable/bg_pantalla"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
     tools:context=".Grupo">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingStart="24dp"
-        android:paddingTop="16dp"
-        android:paddingEnd="24dp"
-        android:paddingBottom="8dp">
+        style="@style/Encabezado"
+        android:orientation="vertical">
 
         <TextView
             style="@style/Subtitulo"
@@ -75,35 +70,23 @@
             android:clipToPadding="false"
             android:divider="@android:color/transparent"
             android:dividerHeight="12dp"
-            android:paddingStart="24dp"
+            android:paddingStart="20dp"
             android:paddingTop="4dp"
-            android:paddingEnd="24dp"
+            android:paddingEnd="20dp"
             android:paddingBottom="96dp"
             android:scrollbarStyle="outsideOverlay" />
 
         <TextView
             android:id="@+id/txtVacio"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            style="@style/EstadoVacio"
             android:text="No hay grupos con este filtro"
-            android:textColor="@color/texto_suave"
             android:visibility="gone" />
 
-        <TextView
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/btnAgregar"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:layout_gravity="bottom|end"
-            android:layout_marginEnd="24dp"
-            android:layout_marginBottom="24dp"
-            android:background="@drawable/bg_boton_agregar"
+            style="@style/Fab"
             android:contentDescription="Crear grupo"
-            android:elevation="6dp"
-            android:gravity="center"
-            android:text="+"
-            android:textColor="@color/sobre_primario"
-            android:textSize="30sp" />
+            android:text="Crear grupo" />
     </FrameLayout>
 
     <include layout="@layout/barra_navegacion" />

@@ -10,6 +10,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.app.TaskStackBuilder
 import androidx.core.content.ContextCompat
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
@@ -22,7 +23,7 @@ import java.util.concurrent.TimeUnit
 
 object Recordatorios {
 
-    const val CANAL = "recordatorios_tareas"
+    const val CANAL = "tareas_avisos"
 
     fun programar(context: Context, tarea: Tarea) {
         val nombre = "recordatorio_${tarea.id}"
@@ -80,14 +81,21 @@ object Recordatorios {
 
     fun crearCanal(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val canal = NotificationChannel(CANAL, "Recordatorios de tareas", NotificationManager.IMPORTANCE_DEFAULT)
-            canal.description = "Avisos un día antes de cada entrega"
+            val canal = NotificationChannel(CANAL, "Tareas y avisos", NotificationManager.IMPORTANCE_HIGH)
+            canal.description = "Tareas nuevas de tus grupos y avisos un día antes de cada entrega"
             val manager = context.getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(canal)
         }
     }
 
-    fun mostrar(context: Context, titulo: String, tipo: String) {
+    fun mostrar(context: Context, titulo: String, tipo: String, idTarea: String) {
+        avisar(
+            context, "Mañana se entrega: $titulo",
+            "$tipo · no lo dejes para el último momento", idTarea, idTarea.hashCode()
+        )
+    }
+
+    fun avisar(context: Context, titulo: String, texto: String, idTarea: String?, numero: Int) {
         crearCanal(context)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
@@ -97,18 +105,30 @@ object Recordatorios {
             return
         }
 
-        val intent = Intent(context, MainActivity::class.java)
-        val abrir = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        val abrir: PendingIntent?
+        if (idTarea.isNullOrEmpty()) {
+            val intent = Intent(context, MainActivity::class.java)
+            abrir = PendingIntent.getActivity(context, numero, intent, PendingIntent.FLAG_IMMUTABLE)
+        } else {
+            val detalle = Intent(context, DetalleTarea::class.java)
+            detalle.putExtra("idTarea", idTarea)
+            abrir = TaskStackBuilder.create(context)
+                .addNextIntent(Intent(context, MainActivity::class.java))
+                .addNextIntent(detalle)
+                .getPendingIntent(numero, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+        }
 
         val notificacion = NotificationCompat.Builder(context, CANAL)
             .setSmallIcon(R.drawable.ic_campana)
-            .setContentTitle("Mañana se entrega: $titulo")
-            .setContentText("$tipo · no lo dejes para el último momento")
+            .setContentTitle(titulo)
+            .setContentText(texto)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(texto))
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(abrir)
             .setAutoCancel(true)
             .build()
 
-        NotificationManagerCompat.from(context).notify(titulo.hashCode(), notificacion)
+        NotificationManagerCompat.from(context).notify(numero, notificacion)
     }
 }
 
@@ -116,7 +136,7 @@ class RecordatorioWorker(context: Context, parametros: WorkerParameters) : Worke
     override fun doWork(): Result {
         val titulo = inputData.getString("titulo") ?: "Tarea"
         val tipo = inputData.getString("tipo") ?: "Tarea"
-        Recordatorios.mostrar(applicationContext, titulo, tipo)
+        Recordatorios.mostrar(applicationContext, titulo, tipo, inputData.getString("id") ?: "")
 
         applicationContext.getSharedPreferences("recordatorios", Context.MODE_PRIVATE)
             .edit()

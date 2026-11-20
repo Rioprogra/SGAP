@@ -12,8 +12,13 @@ import android.widget.FrameLayout
 import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
+import android.graphics.Color
+import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import android.widget.ImageView
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -32,9 +37,13 @@ class Inicio : AppCompatActivity() {
 
     var canalesFiltrados = mutableListOf<Canal>()
 
+    lateinit var txtConsejo: TextView
+    lateinit var btnOtroConsejo: ImageView
+    var generandoConsejo = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        enableEdgeToEdge(SystemBarStyle.dark(Color.TRANSPARENT))
         setContentView(R.layout.activity_inicio)
 
         val txtFecha = findViewById<TextView>(R.id.txtFecha)
@@ -52,6 +61,25 @@ class Inicio : AppCompatActivity() {
         txtFecha.text = formato.format(Date()).replaceFirstChar { it.uppercase() }
 
         Navegacion.configurar(this, R.id.navInicio)
+
+        val nombre = Usuario.nombre.split(" ").firstOrNull().orEmpty()
+        if (nombre.isNotBlank()) {
+            findViewById<TextView>(R.id.txtSaludo).text = "Hola, ${nombre.replaceFirstChar { it.uppercase() }} 👋"
+        }
+
+        txtConsejo = findViewById(R.id.txtConsejo)
+        btnOtroConsejo = findViewById(R.id.btnOtroConsejo)
+        btnOtroConsejo.setOnClickListener { generarConsejo() }
+        txtConsejo.setOnClickListener { generarConsejo() }
+        findViewById<View>(R.id.btnAbrirAsistente).setOnClickListener {
+            startActivity(Intent(this, Asistente::class.java))
+        }
+        val guardado = AsistenteIA.consejoGuardado
+        if (guardado != null) {
+            txtConsejo.text = guardado
+        } else {
+            generarConsejo()
+        }
 
         chipTodos.setOnClickListener { cambiarFiltro("Todos") }
         chipNoLeidos.setOnClickListener { cambiarFiltro("No leídos") }
@@ -75,6 +103,9 @@ class Inicio : AppCompatActivity() {
 
         pintarChips()
 
+        AvisosNuevos.programar(this)
+        AvisosNuevos.revisarAhora(this)
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
             != PackageManager.PERMISSION_GRANTED
@@ -91,6 +122,23 @@ class Inicio : AppCompatActivity() {
         BaseDatos.cargarNotificaciones { pintarCampana() }
 
         BaseDatos.cargarTareas(this) { Recordatorios.programarTodas(this) }
+    }
+
+    fun generarConsejo() {
+        if (generandoConsejo) return
+        generandoConsejo = true
+        btnOtroConsejo.isEnabled = false
+        btnOtroConsejo.animate().rotationBy(360f).setDuration(600).start()
+        txtConsejo.text = "Gemini está preparando un consejo para ti..."
+        lifecycleScope.launch {
+            try {
+                txtConsejo.text = AsistenteIA.consejoDelDia()
+            } catch (e: Exception) {
+                txtConsejo.text = AsistenteIA.mensajeError(e) + " Toca para reintentar."
+            }
+            btnOtroConsejo.isEnabled = true
+            generandoConsejo = false
+        }
     }
 
     fun pintarCampana() {

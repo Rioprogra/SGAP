@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_pantalla"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical"
+    tools:context=".Asistente">
+
+    <LinearLayout
+        style="@style/Encabezado"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:background="@drawable/bg_gemini_circulo"
+            android:elevation="4dp"
+            android:importantForAccessibility="no"
+            android:padding="13dp"
+            android:src="@drawable/ic_chispa"
+            app:tint="@color/white" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/Subtitulo"
+                android:text="Con tecnología de Google Gemini" />
+
+            <TextView
+                style="@style/Titulo"
+                android:text="Asistente IA" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/btnLimpiar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_translucido"
+            android:contentDescription="Nueva conversación"
+            android:padding="9dp"
+            android:src="@drawable/ic_recargar"
+            app:tint="@color/white" />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/lvMensajes"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="10dp"
+        android:paddingStart="16dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp"
+        android:stackFromBottom="false"
+        android:transcriptMode="alwaysScroll" />
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/contSugerencias"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="16dp"
+            android:paddingTop="4dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="8dp">
+
+            <TextView
+                style="@style/Chip"
+                android:text="📅 Plan de estudio" />
+
+            <TextView
+                style="@style/Chip"
+                android:text="🔥 ¿Qué entrego primero?" />
+
+            <TextView
+                style="@style/Chip"
+                android:text="🧠 Tips para examen" />
+
+            <TextView
+                style="@style/Chip"
+                android:text="⏱ Técnica Pomodoro" />
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/superficie"
+        android:elevation="8dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="10dp">
+
+        <EditText
+            android:id="@+id/txtPregunta"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/bg_campo_chat"
+            android:hint="Pregúntale a Gemini..."
+            android:inputType="textMultiLine|textCapSentences"
+            android:maxLines="4"
+            android:maxLength="500"
+            android:minHeight="48dp"
+            android:paddingStart="18dp"
+            android:paddingTop="12dp"
+            android:paddingEnd="18dp"
+            android:paddingBottom="12dp"
+            android:textColor="@color/texto"
+            android:textColorHint="@color/placeholder"
+            android:textSize="15sp" />
+
+        <FrameLayout
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_marginStart="8dp">
+
+            <ImageView
+                android:id="@+id/btnEnviar"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:background="@drawable/bg_gemini_circulo"
+                android:contentDescription="Enviar"
+                android:padding="14dp"
+                android:src="@drawable/ic_enviar"
+                app:tint="@color/white" />
+
+            <ProgressBar
+                android:id="@+id/progresoEnvio"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:indeterminateTint="@color/primario"
+                android:visibility="gone" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <include layout="@layout/barra_navegacion" />
+
+</LinearLayout>

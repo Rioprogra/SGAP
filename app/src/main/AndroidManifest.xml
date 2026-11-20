@@ -14,6 +14,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.StudyGest">
         <activity
+            android:name=".Asistente"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".DetalleTarea"
+            android:exported="false" />
+        <activity
             android:name=".Pendientes"
             android:exported="false" />
         <activity

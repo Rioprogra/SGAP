@@ -97,8 +97,13 @@ object BaseDatos {
                                 if (grupo.id == idGrupo) {
                                     grupo.integrantes.add(doc.getString("iniciales") ?: "?")
                                     grupo.miembrosUid.add(doc.getString("id_usuario") ?: "")
+                                    val correo = doc.getString("correo") ?: ""
+                                    if (correo != "") grupo.correos.add(correo)
                                     if (doc.getString("id_usuario") == uid()) {
                                         grupo.miRol = doc.getString("rol")
+                                        if (correo == "" && Usuario.correo != "") {
+                                            doc.reference.update("correo", Usuario.correo.lowercase())
+                                        }
                                     }
                                 }
                             }
@@ -155,6 +160,7 @@ object BaseDatos {
             "id_usuario" to uid(),
             "rol" to rol,
             "iniciales" to Usuario.iniciales(),
+            "correo" to Usuario.correo.lowercase(),
             "fecha_union" to FieldValue.serverTimestamp(),
             "estado" to 1
         )
@@ -388,7 +394,8 @@ object BaseDatos {
                             doc.getString("mensaje") ?: "",
                             doc.getTimestamp("fecha_programada")?.toDate()?.time ?: 0,
                             origen,
-                            doc.getLong("leida") == 1L
+                            doc.getLong("leida") == 1L,
+                            doc.getString("id_tarea")
                         )
                     )
                 }

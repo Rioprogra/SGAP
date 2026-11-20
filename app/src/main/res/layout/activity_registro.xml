@@ -4,7 +4,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/fondo"
+    android:background="@drawable/bg_pantalla"
     android:fillViewport="true"
     android:fitsSystemWindows="true"
     tools:context=".Registro">
@@ -12,40 +12,55 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="vertical"
-        android:padding="24dp">
+        android:orientation="vertical">
 
-        <ImageView
-            android:layout_width="72dp"
-            android:layout_height="60dp"
-            android:layout_gravity="center_horizontal"
-            android:contentDescription="Logo de StudyGest"
-            android:src="@drawable/logo_studygest" />
+        <LinearLayout
+            style="@style/Encabezado"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingTop="28dp"
+            android:paddingBottom="60dp">
 
-        <TextView
-            android:layout_width="wrap_content"
+            <ImageView
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:background="@drawable/bg_circulo"
+                android:contentDescription="Logo de StudyGest"
+                android:elevation="6dp"
+                android:padding="14dp"
+                android:src="@drawable/logo_studygest" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:fontFamily="sans-serif-black"
+                android:text="Crear cuenta"
+                android:textColor="@color/white"
+                android:textSize="28sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Usa tu correo de la escuela"
+                android:textColor="@color/sobre_primario_suave"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10dp"
-            android:fontFamily="sans-serif-black"
-            android:letterSpacing="-0.02"
-            android:text="Crear cuenta"
-            android:textColor="@color/texto"
-            android:textSize="28sp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="6dp"
-            android:text="Usa tu correo de la escuela"
-            android:textColor="@color/texto_suave"
-            android:textSize="14sp" />
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="-40dp"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/bg_tarjeta"
+            android:elevation="8dp"
+            android:orientation="vertical"
+            android:padding="22dp">
 
         <TextView
             style="@style/Etiqueta"
-            android:layout_marginTop="32dp"
             android:text="Nombre" />
 
         <EditText
@@ -103,12 +118,14 @@
             style="@style/BotonPrimario"
             android:layout_marginTop="24dp"
             android:text="Crear cuenta" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp"
             android:orientation="horizontal">
 
             <TextView

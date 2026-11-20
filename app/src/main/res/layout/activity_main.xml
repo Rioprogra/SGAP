@@ -4,7 +4,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/fondo"
+    android:background="@drawable/bg_pantalla"
     android:fillViewport="true"
     android:fitsSystemWindows="true"
     tools:context=".MainActivity">
@@ -12,96 +12,123 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="vertical"
-        android:padding="24dp">
-
-        <ImageView
-            android:layout_width="120dp"
-            android:layout_height="100dp"
-            android:layout_gravity="center_horizontal"
-            android:contentDescription="Logo de StudyGest"
-            android:src="@drawable/logo_studygest" />
+        android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal">
+            style="@style/Encabezado"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingTop="36dp"
+            android:paddingBottom="64dp">
+
+            <ImageView
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:background="@drawable/bg_circulo"
+                android:contentDescription="Logo de StudyGest"
+                android:elevation="6dp"
+                android:padding="18dp"
+                android:src="@drawable/logo_studygest" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-black"
+                    android:letterSpacing="-0.02"
+                    android:text="Study"
+                    android:textColor="@color/white"
+                    android:textSize="34sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-black"
+                    android:letterSpacing="-0.02"
+                    android:text="Gest"
+                    android:textColor="#80CBC4"
+                    android:textSize="34sp" />
+            </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-black"
-                android:letterSpacing="-0.02"
-                android:text="Study"
-                android:textColor="@color/texto"
-                android:textSize="34sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-black"
-                android:letterSpacing="-0.02"
-                android:text="Gest"
-                android:textColor="@color/secundario"
-                android:textSize="34sp" />
+                android:layout_marginTop="6dp"
+                android:text="Organiza tus clases, tareas y grupos con IA"
+                android:textColor="@color/sobre_primario_suave"
+                android:textSize="14sp" />
         </LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10dp"
-            android:text="Organiza tus clases, canales y grupos"
-            android:textColor="@color/texto_suave"
-            android:textSize="14sp" />
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="-40dp"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/bg_tarjeta"
+            android:elevation="8dp"
+            android:orientation="vertical"
+            android:padding="22dp">
 
-        <TextView
-            style="@style/Etiqueta"
-            android:layout_marginTop="40dp"
-            android:text="Correo institucional" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:fontFamily="sans-serif-black"
+                android:text="Iniciar sesión"
+                android:textColor="@color/texto"
+                android:textSize="22sp" />
 
-        <EditText
-            android:id="@+id/txtCorreo"
-            style="@style/Campo"
-            android:hint="matricula@utcj.edu.mx"
-            android:inputType="textEmailAddress" />
+            <TextView
+                style="@style/Etiqueta"
+                android:text="Correo institucional" />
 
-        <TextView
-            style="@style/Etiqueta"
-            android:layout_marginTop="16dp"
-            android:text="Contraseña" />
+            <EditText
+                android:id="@+id/txtCorreo"
+                style="@style/Campo"
+                android:hint="matricula@utcj.edu.mx"
+                android:inputType="textEmailAddress" />
 
-        <EditText
-            android:id="@+id/txtContrasena"
-            style="@style/Campo"
-            android:hint="••••••••"
-            android:inputType="textPassword" />
+            <TextView
+                style="@style/Etiqueta"
+                android:layout_marginTop="16dp"
+                android:text="Contraseña" />
 
-        <TextView
-            android:id="@+id/txtOlvide"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginTop="16dp"
-            android:fontFamily="sans-serif-medium"
-            android:text="¿Olvidaste tu contraseña?"
-            android:textColor="@color/primario"
-            android:textSize="13sp" />
+            <EditText
+                android:id="@+id/txtContrasena"
+                style="@style/Campo"
+                android:hint="••••••••"
+                android:inputType="textPassword" />
 
-        <Button
-            android:id="@+id/btnIniciar"
-            style="@style/BotonPrimario"
-            android:layout_marginTop="24dp"
-            android:text="Iniciar sesión" />
+            <TextView
+                android:id="@+id/txtOlvide"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="14dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="¿Olvidaste tu contraseña?"
+                android:textColor="@color/primario"
+                android:textSize="13sp" />
+
+            <Button
+                android:id="@+id/btnIniciar"
+                style="@style/BotonPrimario"
+                android:layout_marginTop="20dp"
+                android:text="Iniciar sesión" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp"
             android:orientation="horizontal">
 
             <TextView

@@ -1,19 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primario">#5B86AD</color>
+    <color name="primario">#7986CB</color>
+    <color name="primario_oscuro">#283593</color>
+    <color name="primario_suave">#252B4D</color>
     <color name="sobre_primario">#FFFFFF</color>
-    <color name="texto">#E6EEF5</color>
-    <color name="texto_suave">#A9C1D6</color>
-    <color name="placeholder">#6E8BA5</color>
-    <color name="superficie">#1B2A3A</color>
-    <color name="borde">#2E4257</color>
-    <color name="fondo">#101B27</color>
+    <color name="sobre_primario_suave">#C5CAE9</color>
+    <color name="texto">#ECEDF4</color>
+    <color name="texto_suave">#A7ABBF</color>
+    <color name="placeholder">#6D7188</color>
+    <color name="superficie">#1E2130</color>
+    <color name="borde">#2F3346</color>
+    <color name="fondo">#131520</color>
+    <color name="sombra">#66000000</color>
 
-    <color name="secundario">#8AA9C4</color>
+    <color name="secundario">#4DB6AC</color>
+    <color name="secundario_suave">#16332F</color>
     <color name="error">#F07070</color>
 
     <color name="acento_violeta_suave">#2D2552</color>
     <color name="acento_turquesa_suave">#123B37</color>
     <color name="acento_coral_suave">#4A1E26</color>
     <color name="acento_ambar_suave">#4A3A15</color>
+
+    <color name="ia_inicio">#303F9F</color>
+    <color name="ia_medio">#4A35A8</color>
+    <color name="ia_fin">#00796B</color>
+    <color name="burbuja_ia">#262A3D</color>
 </resources>

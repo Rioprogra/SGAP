@@ -1,28 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primario">#3E5C76</color>
+    <color name="primario">#3F51B5</color>
+    <color name="primario_oscuro">#2C3A8C</color>
+    <color name="primario_suave">#E8EAF6</color>
     <color name="sobre_primario">#FFFFFF</color>
-    <color name="texto">#1D2D44</color>
-    <color name="texto_suave">#3E5C76</color>
-    <color name="placeholder">#8AA9C4</color>
+    <color name="sobre_primario_suave">#D5DAF5</color>
+    <color name="texto">#1C1E2A</color>
+    <color name="texto_suave">#5A5F73</color>
+    <color name="placeholder">#9A9EB0</color>
     <color name="superficie">#FFFFFF</color>
-    <color name="borde">#C9DCE8</color>
-    <color name="fondo">#EAF2F8</color>
+    <color name="borde">#E2E4EE</color>
+    <color name="fondo">#F7F8FC</color>
+    <color name="sombra">#333F51B5</color>
 
-    <color name="secundario">#8AA9C4</color>
+    <color name="secundario">#26A69A</color>
+    <color name="secundario_suave">#DFF4F1</color>
     <color name="error">#D64545</color>
 
-    <color name="acento_rojo">#E52E3E</color>
+    <color name="acento_rojo">#E53950</color>
 
     <color name="acento_violeta">#7C5CFC</color>
-    <color name="acento_turquesa">#14B8A6</color>
+    <color name="acento_turquesa">#26A69A</color>
     <color name="acento_coral">#F2546B</color>
     <color name="acento_ambar">#F5A524</color>
 
     <color name="acento_violeta_suave">#EFEBFF</color>
-    <color name="acento_turquesa_suave">#DDF7F3</color>
+    <color name="acento_turquesa_suave">#DFF4F1</color>
     <color name="acento_coral_suave">#FDE7EA</color>
     <color name="acento_ambar_suave">#FEF3DC</color>
+
+    <color name="ia_inicio">#3F51B5</color>
+    <color name="ia_medio">#6A4FD8</color>
+    <color name="ia_fin">#26A69A</color>
+    <color name="burbuja_ia">#FFFFFF</color>
 
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>

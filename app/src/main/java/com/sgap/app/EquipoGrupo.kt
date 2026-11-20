@@ -12,6 +12,7 @@ data class EquipoGrupo(
 ) {
     var integrantes = mutableListOf<String>()
     var miembrosUid = mutableListOf<String>()
+    var correos = mutableListOf<String>()
     var miRol: String? = null
 
     fun tieneLugar(): Boolean {

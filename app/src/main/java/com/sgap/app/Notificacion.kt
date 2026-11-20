@@ -6,7 +6,8 @@ data class Notificacion(
     var mensaje: String,
     var fechaProgramada: Long,
     var origen: String,
-    var leida: Boolean
+    var leida: Boolean,
+    var idTarea: String? = null
 ) {
     fun icono(): String {
         if (origen == "AVISO") return "!"

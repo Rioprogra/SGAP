@@ -10,10 +10,11 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.Spinner
-import androidx.appcompat.app.AlertDialog
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import android.graphics.Color
+import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -35,7 +36,7 @@ class Pendientes : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        enableEdgeToEdge(SystemBarStyle.dark(Color.TRANSPARENT))
         setContentView(R.layout.activity_pendientes)
 
         val btnRegresar = findViewById<TextView>(R.id.btnRegresar)
@@ -171,6 +172,10 @@ class Pendientes : AppCompatActivity() {
             vista.setOnClickListener {
                 BaseDatos.marcarLeida(notificacion)
                 puntoNoLeida.visibility = View.INVISIBLE
+                val idTarea = notificacion.idTarea
+                if (idTarea != null) {
+                    abrirTarea(idTarea)
+                }
             }
 
             contNotificaciones.addView(vista)
@@ -231,7 +236,7 @@ class Pendientes : AppCompatActivity() {
             txtFecha.text = detalle
         }
 
-        vista.setOnClickListener { mostrarDetalle(tarea) }
+        vista.setOnClickListener { abrirTarea(tarea.id) }
 
         barraTipo.backgroundTintList = ColorStateList.valueOf(color(tarea.color()))
         txtTipo.setTextColor(color(tarea.color()))
@@ -255,41 +260,10 @@ class Pendientes : AppCompatActivity() {
         return vista
     }
 
-    fun mostrarDetalle(tarea: Tarea) {
-        var mensaje = "Tipo: ${tarea.tipo}\n"
-        mensaje += "Entrega: ${tarea.fecha()}\n"
-        if (tarea.nombreMateria() != "") mensaje += "Materia: ${tarea.nombreMateria()}\n"
-        if (tarea.origen == "GRUPO") mensaje += "Es de un grupo\n"
-        if (tarea.completada) {
-            mensaje += "Estado: Entregada\n"
-        } else if (tarea.vencida()) {
-            mensaje += "Estado: Vencida\n"
-        } else {
-            mensaje += "Estado: Pendiente\n"
-        }
-        if (tarea.descripcion != "") mensaje += "\n${tarea.descripcion}"
-
-        val dialogo = AlertDialog.Builder(this)
-            .setTitle(tarea.titulo)
-            .setMessage(mensaje)
-            .setNegativeButton("Cerrar", null)
-
-        val textoEntregar = if (tarea.completada) "Marcar pendiente" else "Marcar entregada"
-        dialogo.setNeutralButton(textoEntregar) { _, _ ->
-            tarea.completada = !tarea.completada
-            BaseDatos.cambiarCompletada(tarea)
-            Recordatorios.programar(this, tarea)
-            mostrarPendientes()
-        }
-
-        if (tarea.idCreador == BaseDatos.uid()) {
-            dialogo.setPositiveButton("Editar") { _, _ ->
-                val intent = Intent(this, NuevaTarea::class.java)
-                intent.putExtra("idTarea", tarea.id)
-                startActivity(intent)
-            }
-        }
-        dialogo.show()
+    fun abrirTarea(idTarea: String) {
+        val intent = Intent(this, DetalleTarea::class.java)
+        intent.putExtra("idTarea", idTarea)
+        startActivity(intent)
     }
 
     fun color(id: Int): Int {

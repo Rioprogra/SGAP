@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.graphics.Color
+import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.work.WorkManager
@@ -14,7 +16,7 @@ import com.google.firebase.auth.FirebaseAuth
 class Perfil : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        enableEdgeToEdge(SystemBarStyle.dark(Color.TRANSPARENT))
         setContentView(R.layout.activity_perfil)
 
         Navegacion.configurar(this, R.id.navPerfil)
@@ -29,6 +31,11 @@ class Perfil : AppCompatActivity() {
         txtNombre.text = Usuario.nombre
         txtCorreo.text = Usuario.correo
         txtIniciales.text = Usuario.iniciales()
+
+        findViewById<TextView>(R.id.btnAsistentePerfil).setOnClickListener {
+            startActivity(Intent(this, Asistente::class.java))
+            finish()
+        }
 
         findViewById<TextView>(R.id.btnProgreso).setOnClickListener {
             startActivity(Intent(this, Progreso::class.java))

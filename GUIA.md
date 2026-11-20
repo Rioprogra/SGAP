@@ -71,7 +71,9 @@ Perfil se cierran (`finish()`), así el botón "atrás" siempre regresa a Inicio
 
 - Archivo: `AsistenteIA.kt`. En **Nueva tarea**, el botón "✨ Sugerir descripción con IA"
   le manda el título a Gemini y pone la respuesta en la descripción.
-- Usa la **Gemini Developer API** (gratis). El modelo está en `AsistenteIA.MODELO`.
+- Usa la **Gemini Developer API** (gratis). El modelo está en `AsistenteIA.MODELO`
+  (`gemini-3.8-flash`, que no pide facturación). Si sale "Gemini aún no está activado"
+  es porque falta el paso de abajo en la consola.
 - Gradle: `firebase-ai` y `firebase-appcheck-debug` (AI Logic exige App Check).
 - Activarlo: consola → **AI Services → AI Logic → Get started** → elegir
   **Gemini Developer API**.
@@ -82,6 +84,18 @@ Perfil se cierran (`finish()`), así el botón "atrás" siempre regresa a Inicio
 
 ## Recordatorios, progreso, modo oscuro y sin conexión
 
+- **Avisos con la app cerrada (`AvisosNuevos.kt`, WorkManager):** un trabajo periódico
+  (cada 15 minutos, el mínimo de Android, solo con internet) busca en `notificaciones`
+  las tuyas sin leer y las muestra como notificación del teléfono aunque la app no esté
+  abierta. Tocarla abre la tarea. Para que fuera instantáneo se necesita Firebase Cloud
+  Messaging con Cloud Functions, que pide el plan de pago Blaze.
+- **Correo al grupo:** al publicar una tarea para un grupo, se abre la app de correo con
+  los correos de los integrantes, el asunto y los datos de la tarea; solo falta enviar.
+  Los correos salen de `miembros_grupo.correo` (cada quien lo guarda al entrar a la app).
+  Mandarlo sin tocar nada necesitaría la extensión "Trigger Email", que pide Blaze.
+- **Detalle de tarea (`DetalleTarea.kt`):** se abre al tocar una tarea, una notificación
+  de la campana o una notificación del teléfono. Muestra tipo, estado, fecha, materia,
+  grupo y descripción, con "Marcar como entregada" y "Editar tarea" (si tú la creaste).
 - **Recordatorios (`Recordatorios.kt`, WorkManager):** cada tarea pendiente programa
   una notificación del teléfono **un día antes a las 9:00**. Si esa hora ya pasó pero
   la entrega no, avisa a los 10 segundos (sirve para la demo: crea una tarea para
@@ -123,7 +137,7 @@ Columna 1 = colecciones (tablas), columna 2 = documentos (filas), columna 3 = ca
 | 1 | `usuarios` | uid de Authentication | nombre, apellidos, correo, zona_horaria, fecha_registro, estado | Sí (Registro / Login) |
 | 2 | `integraciones` | automático | id_usuario, proveedor, servicio, id_externo, tokens… | No (Teams/Outlook necesita servidor) |
 | 3 | `grupos` | automático | nombre, descripcion, codigo_acceso, id_creador, fecha_creacion, estado + **tipo, materia, cupo, total_miembros** | Sí (Grupo) |
-| 4 | `miembros_grupo` | `{idGrupo}_{idUsuario}` | id_grupo, id_usuario, rol, fecha_union, estado + **iniciales** | Sí (Grupo) |
+| 4 | `miembros_grupo` | `{idGrupo}_{idUsuario}` | id_grupo, id_usuario, rol, fecha_union, estado + **iniciales, correo** | Sí (Grupo) |
 | 5 | `tareas` | automático | titulo, descripcion, fecha_creacion, fecha_entrega, origen, id_creador, id_grupo, **id_materia**, id_integracion, id_externo, estado + **tipo** | Sí (Nueva tarea) |
 | 6 | `asignaciones_tarea` | `{idTarea}_{idUsuario}` | id_tarea, id_usuario, estado, fecha_completada | Sí (Pendientes) |
 | 7 | `avisos` | automático | id_grupo, id_autor, titulo, contenido, fechas, estado | Reglas listas, sin pantalla |
@@ -187,7 +201,7 @@ cerrar la app.
 
 | Modelo (`data class`) | Lista de ejemplo (`object`) | Qué guarda |
 |---|---|---|
-| `Canal.kt` | `ListaCanales.kt` | Canales del salón y sus mensajes sin leer |
+| `Canal.kt` | `ListaCanales.kt` | Canales del salón (vacío: ya no trae ejemplos) |
 | `EquipoGrupo.kt` | `ListaGrupos.kt` | Grupos con sus miembros y tu rol, desde Firestore (se llama así para no chocar con la pantalla `Grupo`) |
 | `Tarea.kt` | `ListaTareas.kt` | Tareas, exámenes y proyectos, desde Firestore |
 | `Notificacion.kt` | `ListaNotificaciones.kt` | Notificaciones de la campana, desde Firestore |
@@ -236,14 +250,13 @@ cerrar la app.
   **Modo editar:** si se abre con `intent.putExtra("idTarea", ...)` se llama
   "Editar tarea", llena los campos, oculta "¿Para quién?" y muestra **Eliminar tarea**
   (pide confirmación con un `AlertDialog`).
-- **Pendientes:** notificaciones desde Firestore ("Marcar como leídas", tocar una la
-  marca leída).
+- **Pendientes:** notificaciones desde Firestore ("Marcar como leídas"; tocar una la
+  marca leída y abre su tarea).
   "Por entregar" muestra las 3 más próximas; "Ver todo" muestra todas, incluidas
   las entregadas (tachadas). El círculo de la derecha marca/desmarca entregada.
   Chips **Todas / Tarea / Examen / Proyecto / Vencidas / Entregadas** y un selector de
   materia para filtrar. Ordena por fecha; las **vencidas** dicen "Vencida" en rojo.
-  Tocar una tarjeta abre el **detalle** (tipo, fecha, materia, estado, descripción) con
-  "Marcar entregada" y, si tú la creaste, **Editar**.
+  Tocar una tarjeta abre la pantalla **Detalle** (`DetalleTarea.kt`).
 
 **CRUD de tareas (todo en `BaseDatos.kt`):**
 | Operación | Función | Qué hace en Firestore |
