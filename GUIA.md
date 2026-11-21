@@ -11,13 +11,31 @@ La versión con Compose sigue guardada en la rama `main`.
 
 Diseño: Figma "SGAP - Diseño" (pantallas Login, Inicio, Grupo, Nueva tarea, Pendientes).
 
-## Abrir esta versión
+## Abrir el proyecto en otra computadora (compañeros del equipo)
 
-1. En Android Studio, abajo a la derecha, da clic en el nombre de la rama
-   → `version-xml` → **Checkout**.
-2. Espera el **Gradle Sync** y pulsa **Run ▶**.
-3. Crea una cuenta en **Regístrate** (se guarda en Firebase) y entra con ese
-   correo y contraseña. Necesitas internet.
+Repositorio: https://github.com/Rioprogra/SGAP (rama `version-xml`). Es privado: el
+dueño debe invitar a cada compañero en GitHub → Settings → Collaborators → Add people,
+y cada quien acepta la invitación que le llega por correo.
+
+1. Abrir **Android Studio** → en la pantalla de bienvenida **Clone Repository**
+   (o File → New → Project from Version Control).
+2. En **URL** pegar `https://github.com/Rioprogra/SGAP.git`, elegir la carpeta y dar
+   **Clone**. Si pide iniciar sesión, usar **Log in via GitHub**.
+3. Al abrir, dar **Trust Project**. Esperar a que termine el **Gradle Sync** (barra de
+   abajo; la primera vez tarda varios minutos porque descarga todo).
+4. Abajo a la derecha, clic en el nombre de la rama (dice `main`) →
+   `origin/version-xml` → **Checkout**. Esperar otro Gradle Sync.
+5. Crear un emulador si no hay: Device Manager → **+** → Pixel 6 → una imagen con
+   Google Play → Finish.
+6. Pulsar **Run ▶**. Crear cuenta en **Regístrate**, configurar el perfil y unirse al
+   grupo con el código (DSM41: el que aparece en la pestaña Grupo del jefe de grupo).
+7. **Gemini en un emulador nuevo:** la primera vez Logcat muestra un *debug token*
+   (buscar `DebugAppCheckProvider`). Mandárselo al administrador para que lo agregue en
+   Firebase → App Check → StudyGest Android → ⋮ → Administrar tokens de depuración.
+   Sin eso, Gemini dice "falta configurar App Check".
+
+Para traer los cambios nuevos después: Git → **Pull** (o el botón de la flechita azul).
+No hace falta tocar `google-services.json`: ya viene en el repositorio.
 
 ## Cómo se navega
 
@@ -72,8 +90,10 @@ Perfil se cierran (`finish()`), así el botón "atrás" siempre regresa a Inicio
 - Archivo: `AsistenteIA.kt`. En **Nueva tarea**, el botón "✨ Sugerir descripción con IA"
   le manda el título a Gemini y pone la respuesta en la descripción.
 - Usa la **Gemini Developer API** (gratis). El modelo está en `AsistenteIA.MODELO`
-  (`gemini-3.8-flash`, que no pide facturación). Si sale "Gemini aún no está activado"
-  es porque falta el paso de abajo en la consola.
+  (`gemini-3.5-flash-lite`, gratis y el más rápido) con `ThinkingLevel.MINIMAL` para que
+  conteste en pocos segundos. Se usa en la pestaña Gemini (chat) y en Nueva tarea.
+- App Check: el token de depuración del emulador ("Emulador") ya está registrado en la
+  consola. Un celular nuevo genera otro token (búscalo en Logcat) que también hay que agregar.
 - Gradle: `firebase-ai` y `firebase-appcheck-debug` (AI Logic exige App Check).
 - Activarlo: consola → **AI Services → AI Logic → Get started** → elegir
   **Gemini Developer API**.
@@ -121,6 +141,43 @@ Perfil se cierran (`finish()`), así el botón "atrás" siempre regresa a Inicio
   tipo, fecha y que `id_materia` exista en `materias`; al editar solo se pueden
   cambiar los campos de la pantalla y `estado` (0 o 1). Hay que **publicarlas** en
   la consola → Firestore → Reglas (copiar y pegar el archivo).
+
+## Perfil, roles y administradores
+
+- **Configura tu perfil (`ConfigurarPerfil.kt`):** sale la primera vez que alguien inicia
+  sesión (`usuarios.perfil_completo` = false). Se elige el rol (Alumno, Jefe de grupo o
+  Tutor) y el grupo. Desde Perfil → "Cambiar mi rol o grupo" se puede volver a abrir.
+- **Autorización:** Alumno queda listo al momento. Jefe de grupo y Tutor quedan en
+  `estado_rol = PENDIENTE` y mientras tanto la persona es alumno (`rol = ALUMNO`).
+- **Administradores:** son los desarrolladores. Se dan de alta a mano en la consola →
+  Firestore → colección `administradores` → documento con id = su correo en minúsculas
+  (sin campos obligatorios). En Perfil les aparece "Solicitudes de rol"
+  (`Solicitudes.kt`), donde autorizan o rechazan.
+- **Grupos:** solo un Jefe de grupo o Tutor autorizado puede crearlos. Un tutor puede
+  tener varios. Los alumnos se unen con el código.
+- Campos nuevos en `usuarios`: `rol`, `rol_solicitado`, `estado_rol`
+  (APROBADO / PENDIENTE / RECHAZADO), `id_grupo`, `perfil_completo`, `fecha_solicitud`,
+  `revisado_por`, `fecha_revision`. Las reglas no dejan que alguien se ponga un rol con
+  más poder; solo un administrador puede cambiar `rol` a JEFE o TUTOR.
+
+## Grupos creados con la foto del horario
+
+- Un grupo es el **salón** (por ejemplo DSM41). Solo lo crea un Jefe de grupo o Tutor
+  autorizado desde Grupos → + → Crear grupo (`CrearGrupo.kt`).
+- La pantalla muestra cómo debe ser la foto (`res/drawable-nodpi/ejemplo_horario.jpg`):
+  el horario oficial completo, derecho, con el nombre del grupo arriba, días, horas, y las
+  tablas de Profesores y Materias de abajo.
+- `AsistenteIA.leerHorario()` manda la imagen a Gemini (`gemini-3.8-flash`, respuesta en
+  JSON) y regresa el grupo, cada materia (nombre, abreviatura, profesor, horas por semana,
+  color) y cada clase (día, hora de inicio y fin, materia, aula). Con el horario de
+  ejemplo salen las 7 materias y las 35 horas.
+- Al confirmar se guarda el grupo, una `materias` por materia (con `id_grupo`) y un
+  documento en `horarios` por clase (con `id_grupo` e `id_materia`). Todos los que se
+  unen con el código ven ese horario y esas materias.
+- **Horario** ya no usa ejemplos: lee `horarios` de tus grupos. Tocar una clase abre la
+  materia. El botón "Materias" lista las materias (`Materias.kt`).
+- **Detalle de materia (`DetalleMateria.kt`):** profesor, horas por semana, sus horas en
+  la semana con aula, y sus tareas (con botón para agregar una de esa materia).
 
 ## Base de datos (Cloud Firestore)
 
@@ -233,8 +290,9 @@ cerrar la app.
 - **Login / Registro:** validan campos vacíos, que el correo tenga `@`, contraseña
   de 6+ y (en Registro) que coincidan; Registro pide nombre y apellidos. Usan Firebase Authentication
   (ver la sección Firebase).
-- **Inicio:** fecha de hoy, chips Todos / No leídos / Materias / Avisos. Tocar un
-  canal borra su contador rojo (el chat todavía no está en el Figma). El puntito
+- **Inicio:** fecha de hoy y **Mis tareas** con chips Por entregar /
+  Esta semana / Vencidas / Entregadas (`TareaAdapter`). Cada tarea dice "Se entrega
+  mañana", "Faltan 3 días" o "Vencida hace 2 días". Tocarla abre su detalle. El puntito
   rojo de la campana sale si hay notificaciones sin leer. El "+" abre Nueva tarea.
 - **Grupo:** chips Todos / Proyecto / Estudio / Con lugar. Etiqueta "Tu equipo" o
   "Con lugar". El "+" deja **crear grupo** (quedas como ADMIN y te da el código) o

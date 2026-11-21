@@ -24,7 +24,8 @@ data class EquipoGrupo(
     }
 
     fun puedoPublicar(): Boolean {
-        return miRol == "ADMIN" || miRol == "JEFE" || miRol == "TUTOR"
+        if (miRol == null) return false
+        return miRol == "ADMIN" || miRol == "JEFE" || miRol == "TUTOR" || Usuario.puedeCrearGrupos()
     }
 
     fun color(): Int {

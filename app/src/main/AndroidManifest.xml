@@ -18,6 +18,21 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
+            android:name=".ConfigurarPerfil"
+            android:exported="false" />
+        <activity
+            android:name=".Solicitudes"
+            android:exported="false" />
+        <activity
+            android:name=".CrearGrupo"
+            android:exported="false" />
+        <activity
+            android:name=".Materias"
+            android:exported="false" />
+        <activity
+            android:name=".DetalleMateria"
+            android:exported="false" />
+        <activity
             android:name=".DetalleTarea"
             android:exported="false" />
         <activity

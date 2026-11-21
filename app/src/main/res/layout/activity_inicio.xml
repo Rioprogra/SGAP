@@ -61,69 +61,30 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/tarjetaGemini"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="20dp"
-        android:background="@drawable/bg_gemini"
-        android:elevation="6dp"
-        android:orientation="vertical"
-        android:padding="18dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:importantForAccessibility="no"
-                android:src="@drawable/ic_chispa"
-                app:tint="@color/white" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_weight="1"
-                android:fontFamily="sans-serif-black"
-                android:text="Consejo de estudio · Gemini"
-                android:textColor="@color/white"
-                android:textSize="15sp" />
-
-            <ImageView
-                android:id="@+id/btnOtroConsejo"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:background="@drawable/bg_translucido"
-                android:contentDescription="Otro consejo"
-                android:padding="8dp"
-                android:src="@drawable/ic_recargar"
-                app:tint="@color/white" />
-        </LinearLayout>
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="20dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="20dp">
 
         <TextView
-            android:id="@+id/txtConsejo"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:lineSpacingExtra="3dp"
-            android:maxLines="5"
-            android:ellipsize="end"
-            android:text="Gemini está preparando un consejo para ti..."
-            android:textColor="@color/white"
-            android:textSize="14sp" />
+            android:layout_weight="1"
+            android:fontFamily="sans-serif-black"
+            android:text="Mis tareas"
+            android:textColor="@color/texto"
+            android:textSize="18sp" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnAbrirAsistente"
-            style="@style/BotonGemini"
-            android:layout_marginTop="10dp"
-            android:text="Preguntar a Gemini"
-            app:icon="@drawable/ic_chispa" />
+        <TextView
+            android:id="@+id/txtResumen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/texto_suave"
+            android:textSize="13sp"
+            tools:text="2 por entregar" />
     </LinearLayout>
 
     <HorizontalScrollView
@@ -134,41 +95,31 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
             android:orientation="horizontal"
             android:paddingStart="20dp"
-            android:paddingTop="14dp"
+            android:paddingTop="10dp"
             android:paddingEnd="20dp"
-            android:paddingBottom="10dp">
+            android:paddingBottom="8dp">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="12dp"
-                android:fontFamily="sans-serif-black"
-                android:text="Mis canales"
-                android:textColor="@color/texto"
-                android:textSize="17sp" />
-
-            <TextView
-                android:id="@+id/chipTodos"
+                android:id="@+id/chipPendientes"
                 style="@style/Chip"
-                android:text="Todos" />
+                android:text="Por entregar" />
 
             <TextView
-                android:id="@+id/chipNoLeidos"
+                android:id="@+id/chipSemana"
                 style="@style/Chip"
-                android:text="No leídos" />
+                android:text="Esta semana" />
 
             <TextView
-                android:id="@+id/chipMaterias"
+                android:id="@+id/chipVencidas"
                 style="@style/Chip"
-                android:text="Materias" />
+                android:text="Vencidas" />
 
             <TextView
-                android:id="@+id/chipAvisos"
+                android:id="@+id/chipEntregadas"
                 style="@style/Chip"
-                android:text="Avisos" />
+                android:text="Entregadas" />
         </LinearLayout>
     </HorizontalScrollView>
 
@@ -178,14 +129,14 @@
         android:layout_weight="1">
 
         <ListView
-            android:id="@+id/lvCanales"
+            android:id="@+id/lvTareas"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:divider="@android:color/transparent"
-            android:dividerHeight="12dp"
+            android:dividerHeight="10dp"
             android:paddingStart="20dp"
-            android:paddingTop="4dp"
+            android:paddingTop="6dp"
             android:paddingEnd="20dp"
             android:paddingBottom="96dp"
             android:scrollbarStyle="outsideOverlay" />
@@ -193,7 +144,7 @@
         <TextView
             android:id="@+id/txtVacio"
             style="@style/EstadoVacio"
-            android:text="Aún no tienes canales"
+            android:text="No tienes tareas por entregar 🎉"
             android:visibility="gone" />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_pantalla"
+    android:fillViewport="true"
+    android:fitsSystemWindows="true"
+    tools:context=".ConfigurarPerfil">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            style="@style/Encabezado"
+            android:orientation="vertical"
+            android:paddingBottom="56dp">
+
+            <TextView
+                android:id="@+id/btnRegresar"
+                style="@style/Regresar"
+                android:layout_marginBottom="8dp"
+                android:visibility="gone" />
+
+            <TextView
+                style="@style/Subtitulo"
+                android:text="Un último paso" />
+
+            <TextView
+                style="@style/Titulo"
+                android:text="Configura tu perfil" />
+
+            <TextView
+                android:id="@+id/txtHola"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:textColor="@color/sobre_primario_suave"
+                android:textSize="14sp"
+                tools:text="Hola, Ana. Dinos quién eres en tu salón." />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="-36dp"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/bg_tarjeta"
+            android:elevation="8dp"
+            android:orientation="vertical"
+            android:padding="22dp">
+
+            <TextView
+                style="@style/Etiqueta"
+                android:text="¿Cuál es tu rol?" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/opAlumno"
+                    style="@style/Opcion"
+                    android:text="Alumno" />
+
+                <TextView
+                    android:id="@+id/opJefe"
+                    style="@style/Opcion"
+                    android:layout_marginStart="8dp"
+                    android:text="Jefe de grupo" />
+
+                <TextView
+                    android:id="@+id/opTutor"
+                    style="@style/Opcion"
+                    android:layout_marginStart="8dp"
+                    android:text="Tutor" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/txtAyudaRol"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:lineSpacingExtra="2dp"
+                android:textColor="@color/texto_suave"
+                android:textSize="13sp" />
+
+            <TextView
+                style="@style/Etiqueta"
+                android:layout_marginTop="22dp"
+                android:text="Tu grupo" />
+
+            <Spinner
+                android:id="@+id/spGrupo"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_campo"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp" />
+
+            <TextView
+                android:id="@+id/txtAyudaGrupo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:lineSpacingExtra="2dp"
+                android:textColor="@color/texto_suave"
+                android:textSize="13sp" />
+
+            <Button
+                android:id="@+id/btnGuardar"
+                style="@style/BotonPrimario"
+                android:layout_marginTop="24dp"
+                android:text="Continuar" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

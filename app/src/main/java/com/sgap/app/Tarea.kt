@@ -23,6 +23,39 @@ data class Tarea(
         return !completada && fechaEntrega < hoy.timeInMillis
     }
 
+    fun diasRestantes(): Int {
+        val hoy = java.util.Calendar.getInstance()
+        hoy.set(java.util.Calendar.HOUR_OF_DAY, 0)
+        hoy.set(java.util.Calendar.MINUTE, 0)
+        hoy.set(java.util.Calendar.SECOND, 0)
+        hoy.set(java.util.Calendar.MILLISECOND, 0)
+        val entrega = java.util.Calendar.getInstance()
+        entrega.timeInMillis = fechaEntrega
+        entrega.set(java.util.Calendar.HOUR_OF_DAY, 0)
+        entrega.set(java.util.Calendar.MINUTE, 0)
+        entrega.set(java.util.Calendar.SECOND, 0)
+        entrega.set(java.util.Calendar.MILLISECOND, 0)
+        return Math.round((entrega.timeInMillis - hoy.timeInMillis) / 86400000.0).toInt()
+    }
+
+    fun cuando(): String {
+        if (completada) return "Entregada"
+        val dias = diasRestantes()
+        if (dias < -1) return "Vencida hace ${-dias} días"
+        if (dias == -1) return "Venció ayer"
+        if (dias == 0) return "Se entrega hoy"
+        if (dias == 1) return "Se entrega mañana"
+        if (dias < 7) return "Faltan $dias días"
+        return fecha()
+    }
+
+    fun detalle(): String {
+        var texto = cuando()
+        if (texto != fecha()) texto += " · ${fecha()}"
+        if (nombreMateria() != "") texto += " · ${nombreMateria()}"
+        return texto
+    }
+
     fun nombreMateria(): String {
         return ListaMaterias.nombre(idMateria)
     }

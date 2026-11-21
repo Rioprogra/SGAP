@@ -9,7 +9,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 
-object Navegacion {
+    object Navegacion {
 
     fun configurar(activity: Activity, pestanaActual: Int) {
         pestana(activity, pestanaActual, R.id.navInicio, R.id.icoInicio, R.id.txtNavInicio, Inicio::class.java)

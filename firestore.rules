@@ -13,13 +13,50 @@ service cloud.firestore {
       return exists(/databases/$(database)/documents/miembros_grupo/$(idGrupo + '_' + yo()))
         && get(/databases/$(database)/documents/miembros_grupo/$(idGrupo + '_' + yo())).data.estado == 1;
     }
+    function esAdmin() {
+      return sesion() && request.auth.token.email != null
+        && exists(/databases/$(database)/documents/administradores/$(request.auth.token.email.lower()));
+    }
+    function miUsuario() {
+      return get(/databases/$(database)/documents/usuarios/$(yo())).data;
+    }
+    function rolAutorizado() {
+      return exists(/databases/$(database)/documents/usuarios/$(yo()))
+        && miUsuario().get('estado_rol', '') == 'APROBADO'
+        && miUsuario().get('rol', 'ALUMNO') in ['JEFE', 'TUTOR'];
+    }
     function puedoPublicar(idGrupo) {
       return soyMiembro(idGrupo)
-        && get(/databases/$(database)/documents/miembros_grupo/$(idGrupo + '_' + yo())).data.rol in ['ADMIN', 'JEFE', 'TUTOR'];
+        && (get(/databases/$(database)/documents/miembros_grupo/$(idGrupo + '_' + yo())).data.rol in ['ADMIN', 'JEFE', 'TUTOR']
+            || rolAutorizado());
+    }
+
+    match /administradores/{correo} {
+      allow read: if sesion();
+      allow write: if false;
+    }
+
+    function rolPropioValido(d) {
+      return d.get('rol', 'ALUMNO') == 'ALUMNO'
+        && ((d.get('rol_solicitado', 'ALUMNO') == 'ALUMNO' && d.get('estado_rol', 'APROBADO') == 'APROBADO')
+            || (d.get('rol_solicitado', 'ALUMNO') in ['JEFE', 'TUTOR'] && d.get('estado_rol', '') == 'PENDIENTE'));
+    }
+    function rolSinCambios() {
+      return request.resource.data.get('rol', 'ALUMNO') == resource.data.get('rol', 'ALUMNO')
+        && request.resource.data.get('estado_rol', 'APROBADO') == resource.data.get('estado_rol', 'APROBADO')
+        && request.resource.data.get('rol_solicitado', 'ALUMNO') == resource.data.get('rol_solicitado', 'ALUMNO');
     }
 
     match /usuarios/{idUsuario} {
-      allow read, create, update: if sesion() && yo() == idUsuario;
+      allow read: if sesion() && (yo() == idUsuario || esAdmin());
+      allow create: if sesion() && yo() == idUsuario && rolPropioValido(request.resource.data);
+      allow update: if sesion() && (
+        (yo() == idUsuario && (rolSinCambios() || rolPropioValido(request.resource.data)))
+        || (esAdmin()
+            && request.resource.data.diff(resource.data).affectedKeys()
+                 .hasOnly(['rol', 'estado_rol', 'revisado_por', 'fecha_revision'])
+            && request.resource.data.estado_rol in ['APROBADO', 'RECHAZADO']
+            && request.resource.data.rol in ['ALUMNO', resource.data.get('rol_solicitado', 'ALUMNO')]));
       allow delete: if false;
     }
 
@@ -30,6 +67,7 @@ service cloud.firestore {
     match /grupos/{idGrupo} {
       allow read: if sesion();
       allow create: if sesion()
+        && rolAutorizado()
         && request.resource.data.id_creador == yo()
         && request.resource.data.total_miembros == 1
         && request.resource.data.estado == 1;
@@ -47,7 +85,7 @@ service cloud.firestore {
         && idMiembro == request.resource.data.id_grupo + '_' + yo()
         && request.resource.data.estado == 1
         && (request.resource.data.rol == 'MIEMBRO'
-            || (request.resource.data.rol == 'ADMIN'
+            || (request.resource.data.rol in ['ADMIN', 'JEFE', 'TUTOR']
                 && getAfter(/databases/$(database)/documents/grupos/$(request.resource.data.id_grupo)).data.id_creador == yo()));
       allow delete: if false;
     }
@@ -98,14 +136,28 @@ service cloud.firestore {
       allow delete: if false;
     }
 
-    match /materias/{id}  { allow read: if sesion(); allow write: if false; }
+    function creadorDelGrupo(idGrupo) {
+      return get(/databases/$(database)/documents/grupos/$(idGrupo)).data.id_creador == yo();
+    }
+
+    match /materias/{id} {
+      allow read: if sesion();
+      allow create: if sesion() && rolAutorizado()
+        && request.resource.data.estado == 1
+        && creadorDelGrupo(request.resource.data.id_grupo);
+      allow update: if sesion() && creadorDelGrupo(resource.data.id_grupo);
+      allow delete: if false;
+    }
     match /docentes/{id}  { allow read: if sesion(); allow write: if false; }
     match /edificios/{id} { allow read: if sesion(); allow write: if false; }
     match /aulas/{id}     { allow read: if sesion(); allow write: if false; }
 
     match /horarios/{idHorario} {
-      allow read, update: if sesion() && resource.data.id_usuario == yo();
-      allow create: if sesion() && request.resource.data.id_usuario == yo();
+      allow read: if sesion();
+      allow create: if sesion() && rolAutorizado()
+        && request.resource.data.estado == 1
+        && creadorDelGrupo(request.resource.data.id_grupo);
+      allow update: if sesion() && creadorDelGrupo(resource.data.id_grupo);
       allow delete: if false;
     }
 

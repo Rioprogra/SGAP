@@ -90,7 +90,13 @@ class MainActivity : AppCompatActivity() {
     fun abrirInicio(correo: String, nombre: String?) {
         Usuario.iniciarSesion(correo, nombre)
         BaseDatos.asegurarUsuario(Usuario.nombre, correo)
-        startActivity(Intent(this, Inicio::class.java))
-        finish()
+        BaseDatos.cargarPerfil {
+            if (Usuario.perfilCompleto) {
+                startActivity(Intent(this, Inicio::class.java))
+            } else {
+                startActivity(Intent(this, ConfigurarPerfil::class.java))
+            }
+            finish()
+        }
     }
 }

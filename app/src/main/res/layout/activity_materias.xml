@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_pantalla"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical"
+    tools:context=".Materias">
+
+    <LinearLayout style="@style/EncabezadoBarra">
+
+        <TextView
+            android:id="@+id/btnRegresar"
+            style="@style/Regresar" />
+
+        <TextView
+            android:id="@+id/txtTitulo"
+            style="@style/TituloBarra"
+            android:text="Mis materias" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/txtGrupo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="20dp"
+        android:paddingTop="14dp"
+        android:paddingEnd="20dp"
+        android:textColor="@color/texto_suave"
+        android:textSize="13sp"
+        android:visibility="gone" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <ListView
+            android:id="@+id/lvMaterias"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="10dp"
+            android:paddingStart="20dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="24dp" />
+
+        <TextView
+            android:id="@+id/txtVacio"
+            style="@style/EstadoVacio"
+            android:text="Cargando materias..." />
+    </FrameLayout>
+</LinearLayout>

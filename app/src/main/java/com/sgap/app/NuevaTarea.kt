@@ -289,6 +289,13 @@ class NuevaTarea : AppCompatActivity() {
         adaptador.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spMateria.adapter = adaptador
 
+        val idMateriaInicial = intent.getStringExtra("idMateria")
+        if (tareaEditando == null && idMateriaInicial != null) {
+            for (i in materias.indices) {
+                if (materias[i].id == idMateriaInicial) spMateria.setSelection(i + 1)
+            }
+        }
+
         val editando = tareaEditando
         if (editando != null) {
             for (i in materias.indices) {

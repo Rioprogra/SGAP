@@ -2,6 +2,7 @@ package com.sgap.app
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -37,6 +38,20 @@ class Perfil : AppCompatActivity() {
             finish()
         }
 
+        findViewById<TextView>(R.id.btnCambiarPerfil).setOnClickListener {
+            val intent = Intent(this, ConfigurarPerfil::class.java)
+            intent.putExtra("editar", true)
+            startActivity(intent)
+        }
+
+        findViewById<TextView>(R.id.btnCrearGrupo).setOnClickListener {
+            startActivity(Intent(this, CrearGrupo::class.java))
+        }
+
+        findViewById<TextView>(R.id.btnSolicitudes).setOnClickListener {
+            startActivity(Intent(this, Solicitudes::class.java))
+        }
+
         findViewById<TextView>(R.id.btnProgreso).setOnClickListener {
             startActivity(Intent(this, Progreso::class.java))
         }
@@ -54,6 +69,7 @@ class Perfil : AppCompatActivity() {
             FirebaseAuth.getInstance().signOut()
             WorkManager.getInstance(this).cancelAllWork()
             ListaTareas.tareas.clear()
+            Usuario.limpiar()
             ListaGrupos.grupos.clear()
             ListaNotificaciones.notificaciones.clear()
 
@@ -66,15 +82,40 @@ class Perfil : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         mostrarNumeros()
+        mostrarRol()
 
         BaseDatos.cargarTareas(this) { mostrarNumeros() }
-        BaseDatos.cargarGrupos { mostrarNumeros() }
+        BaseDatos.cargarGrupos {
+            mostrarNumeros()
+            mostrarRol()
+        }
+        BaseDatos.cargarPerfil { mostrarRol() }
+    }
+
+    fun mostrarRol() {
+        var texto = Usuario.descripcionRol()
+        if (Usuario.esAdmin) texto += " · Administrador"
+        findViewById<TextView>(R.id.txtRol).text = texto
+
+        val misGrupos = mutableListOf<String>()
+        for (grupo in ListaGrupos.grupos) {
+            if (grupo.esMio() || grupo.id == Usuario.idGrupo) misGrupos.add(grupo.nombre)
+        }
+        if (misGrupos.isEmpty()) {
+            findViewById<TextView>(R.id.txtGrupo).text = "Sin grupo"
+        } else {
+            findViewById<TextView>(R.id.txtGrupo).text = misGrupos.joinToString(" · ")
+        }
+        if (Usuario.esAdmin) {
+            findViewById<TextView>(R.id.btnSolicitudes).visibility = View.VISIBLE
+        }
+        findViewById<TextView>(R.id.btnCrearGrupo).visibility = if (Usuario.puedeCrearGrupos()) View.VISIBLE else View.GONE
     }
 
     fun mostrarNumeros() {
         findViewById<TextView>(R.id.txtNumPendientes).text = ListaTareas.pendientes().toString()
         findViewById<TextView>(R.id.txtNumGrupos).text = ListaGrupos.misGrupos().toString()
-        findViewById<TextView>(R.id.txtNumCanales).text = ListaCanales.canales.size.toString()
+        findViewById<TextView>(R.id.txtNumEntregadas).text = ListaTareas.tareas.count { it.completada }.toString()
     }
 
     fun abrirPendientes() {

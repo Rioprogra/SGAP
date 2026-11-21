@@ -227,13 +227,11 @@ class Pendientes : AppCompatActivity() {
 
         txtTitulo.text = tarea.titulo
         txtTipo.text = tarea.tipo
-        var detalle = tarea.fecha()
-        if (tarea.nombreMateria() != "") detalle += " · ${tarea.nombreMateria()}"
+        txtFecha.text = tarea.detalle()
         if (tarea.vencida()) {
-            txtFecha.text = "Vencida · $detalle"
             txtFecha.setTextColor(color(R.color.error))
-        } else {
-            txtFecha.text = detalle
+        } else if (!tarea.completada && tarea.diasRestantes() <= 1) {
+            txtFecha.setTextColor(color(R.color.acento_coral))
         }
 
         vista.setOnClickListener { abrirTarea(tarea.id) }

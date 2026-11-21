@@ -14,49 +14,55 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/txtSubtitulo"
             style="@style/Subtitulo"
-            android:text="Ingeniería en Software · 5°A" />
+            android:text="Tu salón" />
 
         <TextView
+            android:id="@+id/txtNombreGrupo"
             style="@style/Titulo"
-            android:text="Grupos del salón" />
+            android:text="Mi grupo" />
+
+        <TextView
+            android:id="@+id/txtInfoGrupo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:textColor="@color/sobre_primario_suave"
+            android:textSize="13sp"
+            android:visibility="gone"
+            tools:text="Código: K7M2Q9XA · Tutor · 24 integrantes" />
     </LinearLayout>
 
     <HorizontalScrollView
+        android:id="@+id/scrollGrupos"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scrollbars="none">
+        android:scrollbars="none"
+        android:visibility="gone">
 
         <LinearLayout
+            android:id="@+id/contChipsGrupos"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:paddingStart="20dp"
             android:paddingTop="12dp"
-            android:paddingEnd="20dp"
-            android:paddingBottom="12dp">
-
-            <TextView
-                android:id="@+id/chipTodos"
-                style="@style/Chip"
-                android:text="Todos" />
-
-            <TextView
-                android:id="@+id/chipProyecto"
-                style="@style/Chip"
-                android:text="Proyecto" />
-
-            <TextView
-                android:id="@+id/chipEstudio"
-                style="@style/Chip"
-                android:text="Estudio" />
-
-            <TextView
-                android:id="@+id/chipConLugar"
-                style="@style/Chip"
-                android:text="Con lugar" />
-        </LinearLayout>
+            android:paddingEnd="20dp" />
     </HorizontalScrollView>
+
+    <TextView
+        android:id="@+id/txtTituloMaterias"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-black"
+        android:paddingStart="20dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="20dp"
+        android:text="Materias"
+        android:textColor="@color/texto"
+        android:textSize="18sp"
+        android:visibility="gone" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -64,29 +70,46 @@
         android:layout_weight="1">
 
         <ListView
-            android:id="@+id/lvGrupos"
+            android:id="@+id/lvMaterias"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:divider="@android:color/transparent"
-            android:dividerHeight="12dp"
+            android:dividerHeight="10dp"
             android:paddingStart="20dp"
-            android:paddingTop="4dp"
+            android:paddingTop="8dp"
             android:paddingEnd="20dp"
             android:paddingBottom="96dp"
             android:scrollbarStyle="outsideOverlay" />
 
-        <TextView
-            android:id="@+id/txtVacio"
-            style="@style/EstadoVacio"
-            android:text="No hay grupos con este filtro"
-            android:visibility="gone" />
+        <LinearLayout
+            android:id="@+id/contVacio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="32dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/txtVacio"
+                style="@style/EstadoVacio"
+                android:text="Aún no estás en un grupo." />
+
+            <Button
+                android:id="@+id/btnCargarHorario"
+                style="@style/BotonPrimario"
+                android:layout_marginTop="20dp"
+                android:text="Cargar horario con foto"
+                android:visibility="gone" />
+        </LinearLayout>
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/btnAgregar"
             style="@style/Fab"
-            android:contentDescription="Crear grupo"
-            android:text="Crear grupo" />
+            android:contentDescription="Unirme con código"
+            android:text="Unirme con código" />
     </FrameLayout>
 
     <include layout="@layout/barra_navegacion" />

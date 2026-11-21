@@ -78,6 +78,23 @@
                     tools:text="20231234@utcj.edu.mx" />
 
                 <TextView
+                    android:id="@+id/txtRol"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/bg_etiqueta"
+                    android:backgroundTint="@color/acento_violeta_suave"
+                    android:paddingStart="10dp"
+                    android:paddingTop="3dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="3dp"
+                    android:textColor="@color/acento_violeta"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    tools:text="Alumno" />
+
+                <TextView
+                    android:id="@+id/txtGrupo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
@@ -87,7 +104,7 @@
                     android:paddingTop="4dp"
                     android:paddingEnd="10dp"
                     android:paddingBottom="4dp"
-                    android:text="Ingeniería en Software · 5°A"
+                    android:text="Sin grupo"
                     android:textColor="@color/secundario"
                     android:textSize="12sp"
                     android:textStyle="bold" />
@@ -130,12 +147,12 @@
                     android:layout_marginStart="8dp">
 
                     <TextView
-                        android:id="@+id/txtNumCanales"
+                        android:id="@+id/txtNumEntregadas"
                         style="@style/DatoNumero" />
 
                     <TextView
                         style="@style/DatoTexto"
-                        android:text="Canales" />
+                        android:text="Entregadas" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -180,6 +197,71 @@
                 android:text="Progreso por materia"
                 android:textColor="@color/texto"
                 android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/btnCrearGrupo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_tarjeta"
+                android:drawableStart="@drawable/ic_horario"
+                android:drawableEnd="@drawable/ic_flecha"
+                android:drawablePadding="14dp"
+                android:drawableTint="@color/primario"
+                android:elevation="2dp"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center_vertical"
+                android:paddingStart="16dp"
+                android:paddingTop="18dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="18dp"
+                android:text="Crear grupo con foto del horario"
+                android:textColor="@color/texto"
+                android:textSize="15sp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/btnCambiarPerfil"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_tarjeta"
+                android:drawableStart="@drawable/ic_perfil"
+                android:drawableEnd="@drawable/ic_flecha"
+                android:drawablePadding="14dp"
+                android:drawableTint="@color/primario"
+                android:elevation="2dp"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center_vertical"
+                android:paddingStart="16dp"
+                android:paddingTop="18dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="18dp"
+                android:text="Cambiar mi rol o grupo"
+                android:textColor="@color/texto"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/btnSolicitudes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_tarjeta"
+                android:drawableStart="@drawable/ic_grupo"
+                android:drawableEnd="@drawable/ic_flecha"
+                android:drawablePadding="14dp"
+                android:drawableTint="@color/primario"
+                android:elevation="2dp"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center_vertical"
+                android:paddingStart="16dp"
+                android:paddingTop="18dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="18dp"
+                android:text="Solicitudes de rol"
+                android:textColor="@color/texto"
+                android:textSize="15sp"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/btnAsistentePerfil"

@@ -1,14 +1,21 @@
 package com.sgap.app
 
+import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.text.InputType
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.EditText
+import android.widget.HorizontalScrollView
+import android.widget.LinearLayout
 import android.widget.ListView
-import android.widget.RadioButton
 import android.widget.TextView
 import android.widget.Toast
-import android.graphics.Color
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
@@ -16,16 +23,10 @@ import androidx.appcompat.app.AppCompatActivity
 
 class Grupo : AppCompatActivity() {
 
-    lateinit var lvGrupos: ListView
-    lateinit var txtVacio: TextView
-    lateinit var chipTodos: TextView
-    lateinit var chipProyecto: TextView
-    lateinit var chipEstudio: TextView
-    lateinit var chipConLugar: TextView
-
-    var filtro = "Todos"
-
-    var gruposFiltrados = mutableListOf<EquipoGrupo>()
+    lateinit var lvMaterias: ListView
+    var misGrupos = listOf<EquipoGrupo>()
+    var grupoActual: EquipoGrupo? = null
+    var materias = mutableListOf<Materia>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,114 +35,134 @@ class Grupo : AppCompatActivity() {
 
         Navegacion.configurar(this, R.id.navGrupo)
 
-        lvGrupos = findViewById(R.id.lvGrupos)
-        txtVacio = findViewById(R.id.txtVacio)
-        chipTodos = findViewById(R.id.chipTodos)
-        chipProyecto = findViewById(R.id.chipProyecto)
-        chipEstudio = findViewById(R.id.chipEstudio)
-        chipConLugar = findViewById(R.id.chipConLugar)
-        val btnAgregar = findViewById<TextView>(R.id.btnAgregar)
-
-        chipTodos.setOnClickListener { cambiarFiltro("Todos") }
-        chipProyecto.setOnClickListener { cambiarFiltro("Proyecto") }
-        chipEstudio.setOnClickListener { cambiarFiltro("Estudio") }
-        chipConLugar.setOnClickListener { cambiarFiltro("Con lugar") }
-
-        lvGrupos.setOnItemClickListener { _, _, position, _ ->
-            val grupo = gruposFiltrados[position]
-
-            if (grupo.esMio()) {
-                AlertDialog.Builder(this)
-                    .setTitle(grupo.nombre)
-                    .setMessage("Tu rol: ${grupo.miRol}\n\nCódigo para invitar:\n${grupo.codigoAcceso}")
-                    .setPositiveButton("Listo", null)
-                    .show()
-            } else if (!grupo.tieneLugar()) {
-                Toast.makeText(this, "${grupo.nombre} ya está lleno", Toast.LENGTH_SHORT).show()
-            } else {
-                AlertDialog.Builder(this)
-                    .setTitle("Unirte a ${grupo.nombre}")
-                    .setMessage("${grupo.tipo} · ${grupo.materia}\n${grupo.integrantes.size} de ${grupo.cupo} lugares ocupados")
-                    .setPositiveButton("Unirme") { _, _ ->
-                        BaseDatos.unirseAGrupo(grupo.id) { error ->
-                            if (error == null) {
-                                Toast.makeText(this, "Te uniste a ${grupo.nombre}", Toast.LENGTH_SHORT).show()
-                            } else {
-                                Toast.makeText(this, "No se pudo: $error", Toast.LENGTH_LONG).show()
-                            }
-                            recargar()
-                        }
-                    }
-                    .setNegativeButton("Cancelar", null)
-                    .show()
-            }
+        lvMaterias = findViewById(R.id.lvMaterias)
+        lvMaterias.setOnItemClickListener { _, _, position, _ ->
+            val intent = Intent(this, DetalleMateria::class.java)
+            intent.putExtra("idMateria", materias[position].id)
+            startActivity(intent)
         }
 
-        btnAgregar.setOnClickListener {
-            val opciones = arrayOf("Crear grupo", "Unirme con código")
-            AlertDialog.Builder(this)
-                .setItems(opciones) { _, cual ->
-                    if (cual == 0) dialogoCrearGrupo() else dialogoUnirseConCodigo()
-                }
-                .show()
+        findViewById<TextView>(R.id.btnAgregar).setOnClickListener { dialogoUnirseConCodigo() }
+
+        findViewById<Button>(R.id.btnCargarHorario).setOnClickListener {
+            val grupo = grupoActual ?: return@setOnClickListener
+            val intent = Intent(this, CrearGrupo::class.java)
+            intent.putExtra("idGrupo", grupo.id)
+            intent.putExtra("nombreGrupo", grupo.nombre)
+            startActivity(intent)
         }
+    }
 
-        pintarChips()
-        mostrarGrupos()
-
-        txtVacio.text = "Cargando grupos..."
-        txtVacio.visibility = View.VISIBLE
+    override fun onResume() {
+        super.onResume()
+        mostrar()
         recargar()
     }
 
     fun recargar() {
-        BaseDatos.cargarGrupos { error ->
-            txtVacio.text = "No hay grupos. Toca + para crear uno"
-            if (error != null) {
-                Toast.makeText(this, "No se pudieron cargar los grupos: $error", Toast.LENGTH_LONG).show()
+        BaseDatos.cargarGrupos {
+            BaseDatos.cargarMaterias {
+                BaseDatos.cargarTareas(this) { mostrar() }
             }
-            mostrarGrupos()
         }
     }
 
-    fun dialogoCrearGrupo() {
-        val vista = layoutInflater.inflate(R.layout.dialog_crear_grupo, null)
-        val txtNombre = vista.findViewById<EditText>(R.id.txtNombreGrupo)
-        val txtMateria = vista.findViewById<EditText>(R.id.txtMateria)
-        val rbEstudio = vista.findViewById<RadioButton>(R.id.rbEstudio)
-        val txtCupo = vista.findViewById<EditText>(R.id.txtCupo)
-        val txtDescripcion = vista.findViewById<EditText>(R.id.txtDescripcionGrupo)
+    fun mostrar() {
+        misGrupos = ListaGrupos.grupos.filter { it.esMio() }.sortedBy { it.nombre }
+        var actual = grupoActual
+        if (actual == null || misGrupos.none { it.id == actual?.id }) {
+            actual = misGrupos.firstOrNull { it.id == Usuario.idGrupo } ?: misGrupos.firstOrNull()
+        } else {
+            actual = misGrupos.first { it.id == actual?.id }
+        }
+        grupoActual = actual
 
-        AlertDialog.Builder(this)
-            .setTitle("Crear grupo")
-            .setView(vista)
-            .setPositiveButton("Crear") { _, _ ->
-                val nombre = txtNombre.text.toString().trim()
-                val materia = txtMateria.text.toString().trim()
-                val cupo = txtCupo.text.toString().toIntOrNull() ?: 0
-                val tipo = if (rbEstudio.isChecked) "Estudio" else "Proyecto"
+        pintarChipsGrupos()
 
-                if (nombre.isEmpty() || materia.isEmpty()) {
-                    Toast.makeText(this, "Escribe el nombre y la materia", Toast.LENGTH_SHORT).show()
-                } else if (cupo < 2 || cupo > 50) {
-                    Toast.makeText(this, "El cupo debe ser de 2 a 50", Toast.LENGTH_SHORT).show()
-                } else {
-                    BaseDatos.crearGrupo(nombre, txtDescripcion.text.toString().trim(), tipo, materia, cupo) { error, codigo ->
-                        if (error == null) {
-                            AlertDialog.Builder(this)
-                                .setTitle("Grupo creado")
-                                .setMessage("Eres ADMIN de $nombre.\n\nComparte este código para que se unan:\n$codigo")
-                                .setPositiveButton("Listo", null)
-                                .show()
-                        } else {
-                            Toast.makeText(this, "No se pudo crear: $error", Toast.LENGTH_LONG).show()
-                        }
-                        recargar()
-                    }
-                }
+        val txtNombre = findViewById<TextView>(R.id.txtNombreGrupo)
+        val txtInfo = findViewById<TextView>(R.id.txtInfoGrupo)
+        val contVacio = findViewById<LinearLayout>(R.id.contVacio)
+        val txtVacio = findViewById<TextView>(R.id.txtVacio)
+        val btnCargarHorario = findViewById<Button>(R.id.btnCargarHorario)
+        val txtTituloMaterias = findViewById<TextView>(R.id.txtTituloMaterias)
+
+        materias.clear()
+        if (actual == null) {
+            txtNombre.text = "Mi grupo"
+            txtInfo.visibility = View.GONE
+            txtTituloMaterias.visibility = View.GONE
+            txtVacio.text = "Aún no estás en un grupo.\nPídele el código a tu jefe de grupo o tutor y toca \"Unirme con código\"."
+            btnCargarHorario.visibility = View.GONE
+            contVacio.visibility = View.VISIBLE
+            lvMaterias.adapter = MateriaAdapter()
+            return
+        }
+
+        txtNombre.text = actual.nombre
+        var info = "Código: ${actual.codigoAcceso} · ${Usuario.nombreRol(actual.miRol ?: "MIEMBRO")}"
+        info += " · ${actual.integrantes.size} integrantes"
+        txtInfo.text = info
+        txtInfo.visibility = View.VISIBLE
+
+        for (materia in ListaMaterias.materias) {
+            if (materia.idGrupo == actual.id) materias.add(materia)
+        }
+        materias.sortWith(compareBy({ -pendientesDe(it) }, { it.nombre }))
+        lvMaterias.adapter = MateriaAdapter()
+
+        if (materias.isEmpty()) {
+            txtTituloMaterias.visibility = View.GONE
+            val soyCreador = actual.idCreador == BaseDatos.uid()
+            if (soyCreador) {
+                txtVacio.text = "Tu grupo todavía no tiene materias. Carga la foto del horario para agregarlas."
+                btnCargarHorario.visibility = View.VISIBLE
+            } else {
+                txtVacio.text = "Tu grupo todavía no tiene materias. El jefe de grupo o tutor debe cargar el horario."
+                btnCargarHorario.visibility = View.GONE
             }
-            .setNegativeButton("Cancelar", null)
-            .show()
+            contVacio.visibility = View.VISIBLE
+        } else {
+            txtTituloMaterias.text = "Materias (${materias.size})"
+            txtTituloMaterias.visibility = View.VISIBLE
+            contVacio.visibility = View.GONE
+        }
+    }
+
+    fun pintarChipsGrupos() {
+        val scroll = findViewById<HorizontalScrollView>(R.id.scrollGrupos)
+        val cont = findViewById<LinearLayout>(R.id.contChipsGrupos)
+        cont.removeAllViews()
+        if (misGrupos.size < 2) {
+            scroll.visibility = View.GONE
+            return
+        }
+        scroll.visibility = View.VISIBLE
+        for (grupo in misGrupos) {
+            val chip = LayoutInflater.from(this).inflate(R.layout.item_chip, cont, false) as TextView
+            chip.text = grupo.nombre
+            Chips.pintar(this, chip, grupo.id == grupoActual?.id)
+            chip.setOnClickListener {
+                grupoActual = grupo
+                mostrar()
+            }
+            cont.addView(chip)
+        }
+    }
+
+    fun pendientesDe(materia: Materia): Int {
+        var cuantas = 0
+        for (tarea in ListaTareas.tareas) {
+            if (tarea.idMateria == materia.id && !tarea.completada) cuantas++
+        }
+        return cuantas
+    }
+
+    fun totalDe(materia: Materia): Int {
+        var cuantas = 0
+        for (tarea in ListaTareas.tareas) {
+            if (tarea.idMateria == materia.id) cuantas++
+        }
+        return cuantas
     }
 
     fun dialogoUnirseConCodigo() {
@@ -151,6 +172,7 @@ class Grupo : AppCompatActivity() {
 
         AlertDialog.Builder(this)
             .setTitle("Unirme con código")
+            .setMessage("Pídele el código a tu jefe de grupo o tutor.")
             .setView(txtCodigo)
             .setPositiveButton("Unirme") { _, _ ->
                 val codigo = txtCodigo.text.toString().trim()
@@ -171,37 +193,47 @@ class Grupo : AppCompatActivity() {
             .show()
     }
 
-    fun cambiarFiltro(nuevoFiltro: String) {
-        filtro = nuevoFiltro
-        pintarChips()
-        mostrarGrupos()
-    }
+    inner class MateriaAdapter : ArrayAdapter<Materia>(this, 0, materias) {
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+            val vista = convertView ?: LayoutInflater.from(context).inflate(R.layout.item_materia_grupo, parent, false)
+            val materia = materias[position]
+            val pendientes = pendientesDe(materia)
+            val total = totalDe(materia)
 
-    fun mostrarGrupos() {
-        gruposFiltrados.clear()
-        for (grupo in ListaGrupos.grupos) {
-            if (filtro == "Todos"
-                || (filtro == "Proyecto" && grupo.tipo == "Proyecto")
-                || (filtro == "Estudio" && grupo.tipo == "Estudio")
-                || (filtro == "Con lugar" && grupo.tieneLugar())
-            ) {
-                gruposFiltrados.add(grupo)
+            val txtSiglas = vista.findViewById<TextView>(R.id.txtSiglas)
+            val txtNombre = vista.findViewById<TextView>(R.id.txtNombre)
+            val txtDetalle = vista.findViewById<TextView>(R.id.txtDetalle)
+            val txtContador = vista.findViewById<TextView>(R.id.txtContador)
+
+            txtNombre.text = materia.nombre
+            txtSiglas.text = siglas(materia)
+
+            if (total == 0) {
+                txtSiglas.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#9AA0AE"))
+                txtDetalle.text = "${materia.profesor} · sin tareas"
+                vista.alpha = 0.55f
+            } else {
+                txtSiglas.backgroundTintList = ColorStateList.valueOf(materia.colorEntero())
+                txtDetalle.text = if (pendientes == 0) "${materia.profesor} · todo entregado ✓" else "${materia.profesor} · $pendientes por entregar"
+                vista.alpha = 1f
             }
+
+            if (pendientes > 0) {
+                txtContador.text = if (pendientes > 9) "9+" else pendientes.toString()
+                txtContador.visibility = View.VISIBLE
+            } else {
+                txtContador.visibility = View.GONE
+            }
+            return vista
         }
 
-        lvGrupos.adapter = GrupoAdapter(this, gruposFiltrados)
-
-        if (gruposFiltrados.isEmpty()) {
-            txtVacio.visibility = View.VISIBLE
-        } else {
-            txtVacio.visibility = View.GONE
+        fun siglas(materia: Materia): String {
+            var resultado = ""
+            for (palabra in materia.nombre.split(" ")) {
+                if (palabra.length > 2 && resultado.length < 2) resultado += palabra[0].uppercaseChar()
+            }
+            if (resultado.isEmpty()) resultado = materia.nombre.take(2).uppercase()
+            return resultado
         }
-    }
-
-    fun pintarChips() {
-        Chips.pintar(this, chipTodos, filtro == "Todos")
-        Chips.pintar(this, chipProyecto, filtro == "Proyecto")
-        Chips.pintar(this, chipEstudio, filtro == "Estudio")
-        Chips.pintar(this, chipConLugar, filtro == "Con lugar")
     }
 }

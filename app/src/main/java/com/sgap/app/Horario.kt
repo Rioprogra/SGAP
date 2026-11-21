@@ -1,5 +1,6 @@
 package com.sgap.app
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.ListView
@@ -19,6 +20,8 @@ class Horario : AppCompatActivity() {
     val dias = listOf("Lun", "Mar", "Mié", "Jue", "Vie")
 
     var diaElegido = "Lun"
+
+    var clasesDelDia = mutableListOf<Clase>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +52,33 @@ class Horario : AppCompatActivity() {
             diaElegido = hoy
         }
 
+        lvClases.setOnItemClickListener { _, _, position, _ ->
+            val clase = clasesDelDia[position]
+            if (clase.idMateria != "") {
+                val intent = Intent(this, DetalleMateria::class.java)
+                intent.putExtra("idMateria", clase.idMateria)
+                startActivity(intent)
+            }
+        }
+
+        findViewById<TextView>(R.id.btnMaterias).setOnClickListener {
+            startActivity(Intent(this, Materias::class.java))
+        }
+
         mostrarClases()
+        BaseDatos.cargarGrupos { mostrarGrupo() }
+        BaseDatos.cargarHorario {
+            mostrarClases()
+            AvisoClases.programarTodas(this)
+        }
+    }
+
+    fun mostrarGrupo() {
+        val nombres = mutableListOf<String>()
+        for (grupo in ListaGrupos.grupos) {
+            if (grupo.esMio()) nombres.add(grupo.nombre)
+        }
+        findViewById<TextView>(R.id.txtGrupo).text = if (nombres.isEmpty()) "Sin grupo" else nombres.joinToString(" · ")
     }
 
     fun mostrarClases() {
@@ -57,7 +86,7 @@ class Horario : AppCompatActivity() {
             Chips.pintar(this, chips[i], dias[i] == diaElegido)
         }
 
-        val clasesDelDia = mutableListOf<Clase>()
+        clasesDelDia.clear()
         for (clase in ListaHorario.clases) {
             if (clase.dia == diaElegido) {
                 clasesDelDia.add(clase)

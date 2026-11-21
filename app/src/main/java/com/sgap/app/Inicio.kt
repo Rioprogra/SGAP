@@ -16,30 +16,22 @@ import android.graphics.Color
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.launch
-import android.widget.ImageView
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 class Inicio : AppCompatActivity() {
 
-    lateinit var lvCanales: ListView
+    lateinit var lvTareas: ListView
     lateinit var txtVacio: TextView
+    lateinit var txtResumen: TextView
     lateinit var puntoAviso: View
-    lateinit var chipTodos: TextView
-    lateinit var chipNoLeidos: TextView
-    lateinit var chipMaterias: TextView
-    lateinit var chipAvisos: TextView
+    lateinit var chips: List<TextView>
 
-    var filtro = "Todos"
+    var filtro = "Por entregar"
 
-    var canalesFiltrados = mutableListOf<Canal>()
+    var tareasFiltradas = mutableListOf<Tarea>()
 
-    lateinit var txtConsejo: TextView
-    lateinit var btnOtroConsejo: ImageView
-    var generandoConsejo = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,13 +41,14 @@ class Inicio : AppCompatActivity() {
         val txtFecha = findViewById<TextView>(R.id.txtFecha)
         val btnNotificaciones = findViewById<FrameLayout>(R.id.btnNotificaciones)
         val btnAgregar = findViewById<TextView>(R.id.btnAgregar)
-        lvCanales = findViewById(R.id.lvCanales)
+        lvTareas = findViewById(R.id.lvTareas)
         txtVacio = findViewById(R.id.txtVacio)
+        txtResumen = findViewById(R.id.txtResumen)
         puntoAviso = findViewById(R.id.puntoAviso)
-        chipTodos = findViewById(R.id.chipTodos)
-        chipNoLeidos = findViewById(R.id.chipNoLeidos)
-        chipMaterias = findViewById(R.id.chipMaterias)
-        chipAvisos = findViewById(R.id.chipAvisos)
+        chips = listOf(
+            findViewById(R.id.chipPendientes), findViewById(R.id.chipSemana),
+            findViewById(R.id.chipVencidas), findViewById(R.id.chipEntregadas)
+        )
 
         val formato = SimpleDateFormat("EEEE d 'de' MMMM", Locale("es", "MX"))
         txtFecha.text = formato.format(Date()).replaceFirstChar { it.uppercase() }
@@ -67,30 +60,14 @@ class Inicio : AppCompatActivity() {
             findViewById<TextView>(R.id.txtSaludo).text = "Hola, ${nombre.replaceFirstChar { it.uppercase() }} 👋"
         }
 
-        txtConsejo = findViewById(R.id.txtConsejo)
-        btnOtroConsejo = findViewById(R.id.btnOtroConsejo)
-        btnOtroConsejo.setOnClickListener { generarConsejo() }
-        txtConsejo.setOnClickListener { generarConsejo() }
-        findViewById<View>(R.id.btnAbrirAsistente).setOnClickListener {
-            startActivity(Intent(this, Asistente::class.java))
-        }
-        val guardado = AsistenteIA.consejoGuardado
-        if (guardado != null) {
-            txtConsejo.text = guardado
-        } else {
-            generarConsejo()
+        for (chip in chips) {
+            chip.setOnClickListener { cambiarFiltro(chip.text.toString()) }
         }
 
-        chipTodos.setOnClickListener { cambiarFiltro("Todos") }
-        chipNoLeidos.setOnClickListener { cambiarFiltro("No leídos") }
-        chipMaterias.setOnClickListener { cambiarFiltro("Materias") }
-        chipAvisos.setOnClickListener { cambiarFiltro("Avisos") }
-
-        lvCanales.setOnItemClickListener { _, _, position, _ ->
-            val canal = canalesFiltrados[position]
-            canal.noLeidos = 0
-            Toast.makeText(this, "#${canal.nombre}: el chat viene pronto", Toast.LENGTH_SHORT).show()
-            mostrarCanales()
+        lvTareas.setOnItemClickListener { _, _, position, _ ->
+            val intent = Intent(this, DetalleTarea::class.java)
+            intent.putExtra("idTarea", tareasFiltradas[position].id)
+            startActivity(intent)
         }
 
         btnNotificaciones.setOnClickListener {
@@ -116,28 +93,20 @@ class Inicio : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        mostrarCanales()
+        mostrarTareas()
 
         pintarCampana()
         BaseDatos.cargarNotificaciones { pintarCampana() }
 
-        BaseDatos.cargarTareas(this) { Recordatorios.programarTodas(this) }
-    }
-
-    fun generarConsejo() {
-        if (generandoConsejo) return
-        generandoConsejo = true
-        btnOtroConsejo.isEnabled = false
-        btnOtroConsejo.animate().rotationBy(360f).setDuration(600).start()
-        txtConsejo.text = "Gemini está preparando un consejo para ti..."
-        lifecycleScope.launch {
-            try {
-                txtConsejo.text = AsistenteIA.consejoDelDia()
-            } catch (e: Exception) {
-                txtConsejo.text = AsistenteIA.mensajeError(e) + " Toca para reintentar."
+        BaseDatos.cargarMaterias {
+            BaseDatos.cargarTareas(this) { error ->
+                if (error != null) {
+                    Toast.makeText(this, "No se pudieron cargar las tareas", Toast.LENGTH_SHORT).show()
+                }
+                mostrarTareas()
+                Recordatorios.programarTodas(this)
+                BaseDatos.cargarHorario { AvisoClases.programarTodas(this) }
             }
-            btnOtroConsejo.isEnabled = true
-            generandoConsejo = false
         }
     }
 
@@ -152,24 +121,51 @@ class Inicio : AppCompatActivity() {
     fun cambiarFiltro(nuevoFiltro: String) {
         filtro = nuevoFiltro
         pintarChips()
-        mostrarCanales()
+        mostrarTareas()
     }
 
-    fun mostrarCanales() {
-        canalesFiltrados.clear()
-        for (canal in ListaCanales.canales) {
-            if (filtro == "Todos"
-                || (filtro == "No leídos" && canal.noLeidos > 0)
-                || (filtro == "Materias" && canal.tipo == "Materia")
-                || (filtro == "Avisos" && canal.tipo == "Aviso")
-            ) {
-                canalesFiltrados.add(canal)
+    fun pasaFiltro(tarea: Tarea): Boolean {
+        return when (filtro) {
+            "Esta semana" -> !tarea.completada && tarea.diasRestantes() in 0..6
+            "Vencidas" -> tarea.vencida()
+            "Entregadas" -> tarea.completada
+            else -> !tarea.completada
+        }
+    }
+
+    fun mostrarTareas() {
+        tareasFiltradas.clear()
+        val ordenadas = ListaTareas.tareas.sortedBy { it.fechaEntrega }
+        for (tarea in ordenadas) {
+            if (pasaFiltro(tarea)) tareasFiltradas.add(tarea)
+        }
+        if (filtro == "Entregadas") tareasFiltradas.reverse()
+
+        lvTareas.adapter = TareaAdapter(this, tareasFiltradas) { tarea ->
+            tarea.completada = !tarea.completada
+            BaseDatos.cambiarCompletada(tarea)
+            Recordatorios.programar(this, tarea)
+            if (tarea.completada) {
+                Toast.makeText(this, "¡Bien! Marcaste \"${tarea.titulo}\" como entregada", Toast.LENGTH_SHORT).show()
             }
+            mostrarTareas()
         }
 
-        lvCanales.adapter = CanalAdapter(this, canalesFiltrados)
+        val pendientes = ListaTareas.pendientes()
+        if (pendientes == 1) {
+            txtResumen.text = "1 por entregar"
+        } else {
+            txtResumen.text = "$pendientes por entregar"
+        }
 
-        if (canalesFiltrados.isEmpty()) {
+        if (tareasFiltradas.isEmpty()) {
+            txtVacio.text = when {
+                ListaTareas.tareas.isEmpty() -> "Aún no tienes tareas.\nToca \"Nueva tarea\" para agregar una"
+                filtro == "Esta semana" -> "Nada que entregar esta semana 🎉"
+                filtro == "Vencidas" -> "No tienes tareas vencidas 👏"
+                filtro == "Entregadas" -> "Todavía no has entregado ninguna"
+                else -> "No tienes tareas por entregar 🎉"
+            }
             txtVacio.visibility = View.VISIBLE
         } else {
             txtVacio.visibility = View.GONE
@@ -177,9 +173,12 @@ class Inicio : AppCompatActivity() {
     }
 
     fun pintarChips() {
-        Chips.pintar(this, chipTodos, filtro == "Todos")
-        Chips.pintar(this, chipNoLeidos, filtro == "No leídos", R.color.acento_rojo)
-        Chips.pintar(this, chipMaterias, filtro == "Materias")
-        Chips.pintar(this, chipAvisos, filtro == "Avisos")
+        for (chip in chips) {
+            if (chip.id == R.id.chipVencidas) {
+                Chips.pintar(this, chip, filtro == chip.text.toString(), R.color.error)
+            } else {
+                Chips.pintar(this, chip, filtro == chip.text.toString())
+            }
+        }
     }
 }

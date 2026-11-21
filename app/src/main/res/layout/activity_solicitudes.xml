@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_pantalla"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical"
+    tools:context=".Solicitudes">
+
+    <LinearLayout style="@style/EncabezadoBarra">
+
+        <TextView
+            android:id="@+id/btnRegresar"
+            style="@style/Regresar" />
+
+        <TextView
+            style="@style/TituloBarra"
+            android:text="Solicitudes de rol" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <ListView
+            android:id="@+id/lvSolicitudes"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="12dp"
+            android:paddingStart="20dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="24dp" />
+
+        <TextView
+            android:id="@+id/txtVacio"
+            style="@style/EstadoVacio"
+            android:text="Cargando solicitudes..." />
+    </FrameLayout>
+</LinearLayout>

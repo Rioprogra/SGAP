@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_pantalla"
+    android:fitsSystemWindows="true"
+    tools:context=".CrearGrupo">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout style="@style/EncabezadoBarra">
+
+        <TextView
+            android:id="@+id/btnRegresar"
+            style="@style/Regresar" />
+
+        <TextView
+            style="@style/TituloBarra"
+            android:text="Crear grupo" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="24dp">
+
+            <LinearLayout
+                android:id="@+id/contInstrucciones"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_tarjeta"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <TextView
+                    style="@style/TituloSeccion"
+                    android:layout_width="match_parent"
+                    android:text="Crea tu grupo con la foto del horario" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:lineSpacingExtra="3dp"
+                    android:text="Gemini lee el horario y crea solo el grupo, todas sus materias con su profesor y el horario de la semana para todos los integrantes."
+                    android:textColor="@color/texto_suave"
+                    android:textSize="14sp" />
+
+                <TextView
+                    style="@style/Etiqueta"
+                    android:layout_marginTop="16dp"
+                    android:text="La foto debe verse así:" />
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:background="@drawable/bg_campo"
+                    android:contentDescription="Ejemplo de horario del grupo DSM41"
+                    android:padding="4dp"
+                    android:src="@drawable/ejemplo_horario" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:lineSpacingExtra="4dp"
+                    android:text="• El horario oficial completo de la escuela, derecho y sin cortar.\n• Que se lea el nombre del grupo arriba (por ejemplo DSM41).\n• Que se vean los días (Lunes a Viernes) y las horas a la izquierda.\n• Cada clase con su materia, profesor y aula.\n• Que se vean las tablas de Profesores y Materias de abajo: de ahí salen los nombres completos y las horas por semana.\n• Recorta la captura para que solo quede la hoja, sin la barra del celular.\n• Con buena luz, sin sombras ni reflejos, y que las letras se lean."
+                    android:textColor="@color/texto"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnElegirFoto"
+                style="@style/BotonPrimario"
+                android:layout_marginTop="20dp"
+                android:text="Elegir foto del horario" />
+
+            <ImageView
+                android:id="@+id/imgFoto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:adjustViewBounds="true"
+                android:contentDescription="Foto del horario elegida"
+                android:maxHeight="320dp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/txtEstado"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center"
+                android:textColor="@color/texto_suave"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btnReintentar"
+                style="@style/BotonPrimario"
+                android:layout_marginTop="12dp"
+                android:text="Reintentar con esta foto"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/contResultado"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_tarjeta"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="18dp"
+                android:visibility="gone">
+
+                <TextView
+                    style="@style/Etiqueta"
+                    android:text="Nombre del grupo" />
+
+                <EditText
+                    android:id="@+id/txtNombreGrupo"
+                    style="@style/Campo"
+                    android:inputType="textCapCharacters"
+                    android:maxLength="30" />
+
+                <TextView
+                    android:id="@+id/txtResumen"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="@color/texto"
+                    android:textSize="14sp" />
+
+                <LinearLayout
+                    android:id="@+id/contMaterias"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="vertical" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="Revisa que esté bien. Si algo salió mal, elige otra foto más clara."
+                    android:textColor="@color/texto_suave"
+                    android:textSize="13sp" />
+
+                <Button
+                    android:id="@+id/btnCrear"
+                    style="@style/BotonPrimario"
+                    android:layout_marginTop="16dp"
+                    android:text="Crear grupo" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/pantallaCargando"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_pantalla"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="32dp"
+        android:visibility="gone">
+
+        <FrameLayout
+            android:layout_width="96dp"
+            android:layout_height="96dp">
+
+            <ProgressBar
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:indeterminate="true"
+                android:indeterminateTint="@color/primario" />
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_chispa"
+                android:tint="@color/primario" />
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:fontFamily="sans-serif-black"
+            android:text="Gemini está leyendo tu horario"
+            android:textColor="@color/texto"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/txtCargando"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="Buscando el grupo, las materias, los profesores y las horas..."
+            android:textColor="@color/texto_suave"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/btnCancelar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:padding="12dp"
+            android:text="Cancelar"
+            android:textColor="@color/primario"
+            android:textStyle="bold" />
+    </LinearLayout>
+</FrameLayout>

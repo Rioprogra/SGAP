@@ -11,15 +11,37 @@
 
     <LinearLayout
         style="@style/Encabezado"
-        android:orientation="vertical">
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtGrupo"
+                style="@style/Subtitulo"
+                android:text="Sin grupo" />
+
+            <TextView
+                style="@style/Titulo"
+                android:text="Mi horario" />
+        </LinearLayout>
 
         <TextView
-            style="@style/Subtitulo"
-            android:text="Ingeniería en Software · 5°A" />
-
-        <TextView
-            style="@style/Titulo"
-            android:text="Mi horario" />
+            android:id="@+id/btnMaterias"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_translucido"
+            android:paddingStart="14dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="14dp"
+            android:paddingBottom="8dp"
+            android:text="Materias"
+            android:textColor="@color/sobre_primario"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout

@@ -28,7 +28,7 @@
     <LinearLayout
         android:id="@+id/navGrupo"
         style="@style/NavBoton"
-        android:contentDescription="Grupos">
+        android:contentDescription="Grupo">
 
         <ImageView
             android:id="@+id/icoGrupo"
@@ -38,7 +38,7 @@
         <TextView
             android:id="@+id/txtNavGrupo"
             style="@style/NavTexto"
-            android:text="Grupos" />
+            android:text="Grupo" />
     </LinearLayout>
 
     <LinearLayout

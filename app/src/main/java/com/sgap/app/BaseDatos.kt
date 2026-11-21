@@ -1,6 +1,8 @@
 package com.sgap.app
 
 import android.content.Context
+import android.graphics.Color
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
@@ -54,20 +56,280 @@ object BaseDatos {
         }
     }
 
-    fun cargarMaterias(alTerminar: (materias: List<Materia>) -> Unit) {
-        db.collection("materias").get()
-            .addOnSuccessListener { resultado ->
-                val materias = mutableListOf<Materia>()
-                for (doc in resultado) {
-                    if (doc.id == "_plantilla") continue
-                    if ((doc.getLong("estado") ?: 1) != 1L) continue
-                    materias.add(Materia(doc.id, doc.getString("nombre") ?: doc.id))
+    fun cargarPerfil(alTerminar: () -> Unit) {
+        db.collection("usuarios").document(uid()).get()
+            .addOnSuccessListener { doc ->
+                Usuario.rol = doc.getString("rol") ?: "ALUMNO"
+                Usuario.rolSolicitado = doc.getString("rol_solicitado") ?: Usuario.rol
+                Usuario.estadoRol = doc.getString("estado_rol") ?: "APROBADO"
+                Usuario.idGrupo = doc.getString("id_grupo") ?: ""
+                Usuario.perfilCompleto = doc.getBoolean("perfil_completo") ?: false
+                revisarAdmin(alTerminar)
+            }
+            .addOnFailureListener { revisarAdmin(alTerminar) }
+    }
+
+    fun revisarAdmin(alTerminar: () -> Unit) {
+        val correo = FirebaseAuth.getInstance().currentUser?.email?.lowercase() ?: ""
+        if (correo == "") {
+            Usuario.esAdmin = false
+            alTerminar()
+            return
+        }
+        db.collection("administradores").document(correo).get()
+            .addOnSuccessListener { doc ->
+                Usuario.esAdmin = doc.exists()
+                alTerminar()
+            }
+            .addOnFailureListener {
+                Usuario.esAdmin = false
+                alTerminar()
+            }
+    }
+
+    fun guardarPerfil(rolSolicitado: String, idGrupo: String, alTerminar: (error: String?) -> Unit) {
+        val datos = hashMapOf<String, Any>(
+            "id_grupo" to idGrupo,
+            "perfil_completo" to true
+        )
+        val yaLoTiene = Usuario.rol == rolSolicitado && Usuario.estadoRol == "APROBADO"
+        if (!yaLoTiene) {
+            datos["rol"] = "ALUMNO"
+            datos["rol_solicitado"] = rolSolicitado
+            if (rolSolicitado == "ALUMNO") {
+                datos["estado_rol"] = "APROBADO"
+            } else {
+                datos["estado_rol"] = "PENDIENTE"
+                datos["fecha_solicitud"] = FieldValue.serverTimestamp()
+            }
+        }
+
+        db.collection("usuarios").document(uid()).set(datos, SetOptions.merge())
+            .addOnSuccessListener {
+                if (!yaLoTiene) {
+                    Usuario.rol = "ALUMNO"
+                    Usuario.rolSolicitado = rolSolicitado
+                    Usuario.estadoRol = datos["estado_rol"] as String
                 }
-                ListaMaterias.materias.clear()
-                ListaMaterias.materias.addAll(materias.sortedBy { it.nombre })
-                alTerminar(ListaMaterias.materias)
+                Usuario.idGrupo = idGrupo
+                Usuario.perfilCompleto = true
+
+                var yaSoyMiembro = false
+                for (grupo in ListaGrupos.grupos) {
+                    if (grupo.id == idGrupo && grupo.esMio()) yaSoyMiembro = true
+                }
+                if (idGrupo == "" || yaSoyMiembro) {
+                    alTerminar(null)
+                } else {
+                    unirseAGrupo(idGrupo) { error -> alTerminar(error) }
+                }
+            }
+            .addOnFailureListener { error -> alTerminar(error.message) }
+    }
+
+    fun cargarSolicitudes(alTerminar: (lista: List<Solicitud>, error: String?) -> Unit) {
+        db.collection("usuarios").whereEqualTo("estado_rol", "PENDIENTE").get()
+            .addOnSuccessListener { resultado ->
+                val lista = mutableListOf<Solicitud>()
+                for (doc in resultado) {
+                    val nombre = ((doc.getString("nombre") ?: "") + " " + (doc.getString("apellidos") ?: "")).trim()
+                    lista.add(
+                        Solicitud(
+                            doc.id,
+                            nombre,
+                            doc.getString("correo") ?: "",
+                            doc.getString("rol_solicitado") ?: "ALUMNO",
+                            doc.getString("id_grupo") ?: ""
+                        )
+                    )
+                }
+                alTerminar(lista, null)
+            }
+            .addOnFailureListener { error -> alTerminar(listOf(), error.message) }
+    }
+
+    fun revisarSolicitud(solicitud: Solicitud, aprobar: Boolean, alTerminar: (error: String?) -> Unit) {
+        val rolNuevo = if (aprobar) solicitud.rolSolicitado else "ALUMNO"
+        val estado = if (aprobar) "APROBADO" else "RECHAZADO"
+        db.collection("usuarios").document(solicitud.idUsuario).update(
+            "rol", rolNuevo,
+            "estado_rol", estado,
+            "revisado_por", uid(),
+            "fecha_revision", FieldValue.serverTimestamp()
+        )
+            .addOnSuccessListener { alTerminar(null) }
+            .addOnFailureListener { error -> alTerminar(error.message) }
+    }
+
+    fun misGruposIds(alTerminar: (ids: List<String>) -> Unit) {
+        db.collection("miembros_grupo")
+            .whereEqualTo("id_usuario", uid())
+            .whereEqualTo("estado", 1)
+            .get()
+            .addOnSuccessListener { resultado ->
+                val ids = mutableListOf<String>()
+                for (doc in resultado) {
+                    val idGrupo = doc.getString("id_grupo") ?: ""
+                    if (idGrupo != "" && !ids.contains(idGrupo)) ids.add(idGrupo)
+                }
+                alTerminar(ids)
             }
             .addOnFailureListener { alTerminar(listOf()) }
+    }
+
+    fun leerMateria(doc: DocumentSnapshot): Materia {
+        return Materia(
+            doc.id,
+            doc.getString("nombre") ?: doc.id,
+            doc.getString("id_grupo") ?: "",
+            doc.getString("abreviatura") ?: "",
+            doc.getString("profesor") ?: "",
+            (doc.getLong("horas_semana") ?: 0).toInt(),
+            doc.getString("color") ?: ""
+        )
+    }
+
+    fun cargarMaterias(alTerminar: (materias: List<Materia>) -> Unit) {
+        misGruposIds { ids ->
+            if (ids.isEmpty()) {
+                ListaMaterias.materias.clear()
+                alTerminar(ListaMaterias.materias)
+                return@misGruposIds
+            }
+            db.collection("materias").whereIn("id_grupo", ids.take(30)).get()
+                .addOnSuccessListener { resultado ->
+                    val materias = mutableListOf<Materia>()
+                    for (doc in resultado) {
+                        if ((doc.getLong("estado") ?: 1) != 1L) continue
+                        materias.add(leerMateria(doc))
+                    }
+                    ListaMaterias.materias.clear()
+                    ListaMaterias.materias.addAll(materias.sortedBy { it.nombre })
+                    alTerminar(ListaMaterias.materias)
+                }
+                .addOnFailureListener { alTerminar(ListaMaterias.materias) }
+        }
+    }
+
+    fun cargarHorario(alTerminar: (error: String?) -> Unit) {
+        cargarMaterias {
+            misGruposIds { ids ->
+                if (ids.isEmpty()) {
+                    ListaHorario.clases.clear()
+                    alTerminar(null)
+                    return@misGruposIds
+                }
+                db.collection("horarios").whereIn("id_grupo", ids.take(30)).get()
+                    .addOnSuccessListener { resultado ->
+                        val clases = mutableListOf<Clase>()
+                        for (doc in resultado) {
+                            if ((doc.getLong("estado") ?: 1) != 1L) continue
+                            val idMateria = doc.getString("id_materia") ?: ""
+                            val materia = ListaMaterias.buscar(idMateria)
+                            val dia = (doc.getLong("dia_semana") ?: 1).toInt()
+                            clases.add(
+                                Clase(
+                                    Fechas.dias[dia % 7],
+                                    doc.getString("hora_inicio") ?: "",
+                                    doc.getString("hora_fin") ?: "",
+                                    materia?.nombre ?: "Materia",
+                                    doc.getString("aula") ?: "",
+                                    materia?.profesor ?: "",
+                                    materia?.colorEntero() ?: Color.GRAY,
+                                    idMateria,
+                                    doc.id,
+                                    dia
+                                )
+                            )
+                        }
+                        ListaHorario.clases.clear()
+                        ListaHorario.clases.addAll(clases.sortedBy { it.inicio })
+                        alTerminar(null)
+                    }
+                    .addOnFailureListener { error -> alTerminar(error.message) }
+            }
+        }
+    }
+
+    fun crearGrupoDesdeHorario(horario: HorarioLeido, nombre: String, alTerminar: (error: String?, codigo: String) -> Unit) {
+        val codigo = codigoAleatorio()
+        val documentoGrupo = db.collection("grupos").document()
+        val idGrupo = documentoGrupo.id
+        val documentoMiembro = db.collection("miembros_grupo").document("${idGrupo}_${uid()}")
+        val soyTutor = Usuario.rol == "TUTOR"
+
+        val grupo = hashMapOf(
+            "nombre" to nombre,
+            "descripcion" to horario.escuela,
+            "codigo_acceso" to codigo,
+            "id_creador" to uid(),
+            "id_tutor" to if (soyTutor) uid() else "",
+            "tutor_nombre" to if (soyTutor) Usuario.nombre else "",
+            "fecha_creacion" to FieldValue.serverTimestamp(),
+            "estado" to 1,
+            "tipo" to "Salón",
+            "materia" to "${horario.materias.size} materias",
+            "cupo" to 60,
+            "total_miembros" to 1
+        )
+
+        val lote = db.batch()
+        lote.set(documentoGrupo, grupo)
+        lote.set(documentoMiembro, datosMiembro(idGrupo, Usuario.rol))
+        lote.commit()
+            .addOnSuccessListener {
+                Usuario.idGrupo = idGrupo
+                db.collection("usuarios").document(uid()).update("id_grupo", idGrupo)
+                guardarHorarioDeGrupo(idGrupo, horario) { error -> alTerminar(error, codigo) }
+            }
+            .addOnFailureListener { error -> alTerminar(error.message, "") }
+    }
+
+    fun guardarHorarioDeGrupo(idGrupo: String, horario: HorarioLeido, alTerminar: (error: String?) -> Unit) {
+        val escrituras = mutableListOf<com.google.android.gms.tasks.Task<Void>>()
+        val idsMaterias = HashMap<String, String>()
+        for (materia in horario.materias) {
+            val documento = db.collection("materias").document()
+            idsMaterias[materia.nombre] = documento.id
+            escrituras.add(
+                documento.set(
+                    hashMapOf(
+                        "id_grupo" to idGrupo,
+                        "nombre" to materia.nombre,
+                        "abreviatura" to materia.abreviatura,
+                        "profesor" to materia.profesor,
+                        "profesor_corto" to materia.profesorCorto,
+                        "horas_semana" to materia.horas,
+                        "color" to materia.color,
+                        "estado" to 1
+                    )
+                )
+            )
+        }
+        for (clase in horario.clases) {
+            val materia = horario.materiaDe(clase) ?: continue
+            escrituras.add(
+                db.collection("horarios").document().set(
+                    hashMapOf(
+                        "id_grupo" to idGrupo,
+                        "id_materia" to idsMaterias[materia.nombre],
+                        "dia_semana" to clase.dia,
+                        "hora_inicio" to clase.inicio,
+                        "hora_fin" to clase.fin,
+                        "aula" to clase.aula,
+                        "estado" to 1
+                    )
+                )
+            )
+        }
+        com.google.android.gms.tasks.Tasks.whenAllComplete(escrituras)
+            .addOnCompleteListener {
+                var error: String? = null
+                for (escritura in escrituras) {
+                    if (!escritura.isSuccessful) error = escritura.exception?.message ?: "No se pudo guardar"
+                }
+                alTerminar(error)
+            }
     }
 
     fun cargarGrupos(alTerminar: (error: String?) -> Unit) {
@@ -122,36 +384,6 @@ object BaseDatos {
         var codigo = ""
         repeat(8) { codigo += letras.random() }
         return codigo
-    }
-
-    fun crearGrupo(
-        nombre: String, descripcion: String, tipo: String, materia: String, cupo: Int,
-        alTerminar: (error: String?, codigo: String) -> Unit
-    ) {
-        val codigo = codigoAleatorio()
-        val documentoGrupo = db.collection("grupos").document()
-        val documentoMiembro = db.collection("miembros_grupo").document("${documentoGrupo.id}_${uid()}")
-
-        val grupo = hashMapOf(
-            "nombre" to nombre,
-            "descripcion" to descripcion,
-            "codigo_acceso" to codigo,
-            "id_creador" to uid(),
-            "fecha_creacion" to FieldValue.serverTimestamp(),
-            "estado" to 1,
-            "tipo" to tipo,
-            "materia" to materia,
-            "cupo" to cupo,
-            "total_miembros" to 1
-        )
-        val miembro = datosMiembro(documentoGrupo.id, "ADMIN")
-
-        val lote = db.batch()
-        lote.set(documentoGrupo, grupo)
-        lote.set(documentoMiembro, miembro)
-        lote.commit()
-            .addOnSuccessListener { alTerminar(null, codigo) }
-            .addOnFailureListener { error -> alTerminar(error.message, "") }
     }
 
     fun datosMiembro(idGrupo: String, rol: String): HashMap<String, Any> {

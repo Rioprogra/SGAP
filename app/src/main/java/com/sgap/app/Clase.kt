@@ -7,5 +7,8 @@ data class Clase(
     var materia: String,
     var salon: String,
     var profesor: String,
-    var color: Int
+    var color: Int,
+    var idMateria: String = "",
+    var idHorario: String = "",
+    var diaNumero: Int = 1
 )
