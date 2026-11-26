@@ -17,7 +17,7 @@ class Horario : AppCompatActivity() {
     lateinit var txtVacio: TextView
 
     lateinit var chips: List<TextView>
-    val dias = listOf("Lun", "Mar", "Mié", "Jue", "Vie")
+    val dias = listOf("Lun", "Mar", "Mié", "Jue", "Vie", "Sáb")
 
     var diaElegido = "Lun"
 
@@ -37,7 +37,8 @@ class Horario : AppCompatActivity() {
             findViewById(R.id.chipMar),
             findViewById(R.id.chipMie),
             findViewById(R.id.chipJue),
-            findViewById(R.id.chipVie)
+            findViewById(R.id.chipVie),
+            findViewById(R.id.chipSab)
         )
 
         for (i in chips.indices) {
@@ -94,6 +95,9 @@ class Horario : AppCompatActivity() {
         }
 
         lvClases.adapter = ClaseAdapter(this, clasesDelDia)
+
+        val hayClasesSabado = ListaHorario.clases.any { it.dia == "Sáb" }
+        chips[5].visibility = if (hayClasesSabado || diaElegido == "Sáb") View.VISIBLE else View.GONE
 
         if (clasesDelDia.isEmpty()) {
             txtVacio.visibility = View.VISIBLE

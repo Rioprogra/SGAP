@@ -136,7 +136,7 @@ class Pendientes : AppCompatActivity() {
 
         BaseDatos.cargarTareas(this) { error ->
             if (error != null) {
-                Toast.makeText(this, "No se pudieron cargar las tareas: $error", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "No se pudieron cargar las tareas, revisa tu conexión", Toast.LENGTH_LONG).show()
             }
             mostrarPendientes()
             Recordatorios.programarTodas(this)
@@ -180,6 +180,10 @@ class Pendientes : AppCompatActivity() {
 
             contNotificaciones.addView(vista)
         }
+
+        val vacio = ListaNotificaciones.notificaciones.isEmpty()
+        findViewById<TextView>(R.id.txtSinNotificaciones).visibility = if (vacio) View.VISIBLE else View.GONE
+        findViewById<TextView>(R.id.txtMarcarLeidas).visibility = if (ListaNotificaciones.hayNoLeidas()) View.VISIBLE else View.GONE
     }
 
     fun mostrarPendientes() {

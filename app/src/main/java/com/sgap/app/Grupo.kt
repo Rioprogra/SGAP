@@ -100,7 +100,8 @@ class Grupo : AppCompatActivity() {
 
         txtNombre.text = actual.nombre
         var info = "Código: ${actual.codigoAcceso} · ${Usuario.nombreRol(actual.miRol ?: "MIEMBRO")}"
-        info += " · ${actual.integrantes.size} integrantes"
+        val cuantos = actual.integrantes.size
+        info += if (cuantos == 1) " · 1 integrante" else " · $cuantos integrantes"
         txtInfo.text = info
         txtInfo.visibility = View.VISIBLE
 

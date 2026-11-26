@@ -77,6 +77,12 @@
             android:id="@+id/chipVie"
             style="@style/Chip"
             android:text="Vie" />
+
+        <TextView
+            android:id="@+id/chipSab"
+            style="@style/Chip"
+            android:text="Sáb"
+            android:visibility="gone" />
     </LinearLayout>
 
     <FrameLayout

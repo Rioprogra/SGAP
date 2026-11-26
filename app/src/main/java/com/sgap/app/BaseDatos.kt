@@ -471,7 +471,8 @@ object BaseDatos {
             .addOnSuccessListener { asignaciones ->
                 sinConexion = asignaciones.metadata.isFromCache
                 val tareas = mutableListOf<Tarea>()
-                var faltan = asignaciones.size()
+                val validas = asignaciones.filter { (it.getString("id_tarea") ?: "") != "" }
+                var faltan = validas.size
 
                 if (faltan == 0) {
                     ListaTareas.tareas.clear()
@@ -484,12 +485,12 @@ object BaseDatos {
                     return@addOnSuccessListener
                 }
 
-                for (asignacion in asignaciones) {
+                for (asignacion in validas) {
                     val idTarea = asignacion.getString("id_tarea") ?: ""
                     db.collection("tareas").document(idTarea).get()
                         .addOnCompleteListener { resultado ->
-                            val doc = resultado.result
-                            if (resultado.isSuccessful && doc != null && doc.exists() && doc.getLong("estado") == 1L) {
+                            val doc = if (resultado.isSuccessful) resultado.result else null
+                            if (doc != null && doc.exists() && doc.getLong("estado") == 1L) {
                                 val tarea = Tarea(
                                     doc.getString("titulo") ?: "",
                                     doc.getString("tipo") ?: "Tarea",

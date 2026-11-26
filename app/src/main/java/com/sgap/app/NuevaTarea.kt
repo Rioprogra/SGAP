@@ -140,6 +140,7 @@ class NuevaTarea : AppCompatActivity() {
             } else if (fechaElegida == null) {
                 Toast.makeText(this, "Selecciona la fecha de entrega", Toast.LENGTH_SHORT).show()
             } else if (tareaEditando != null) {
+                btnGuardar.isEnabled = false
                 val tarea = tareaEditando!!
                 tarea.titulo = titulo
                 tarea.tipo = tipo
@@ -151,6 +152,7 @@ class NuevaTarea : AppCompatActivity() {
                 Toast.makeText(this, "Cambios guardados", Toast.LENGTH_SHORT).show()
                 finish()
             } else {
+                btnGuardar.isEnabled = false
                 val posicion = spPara.selectedItemPosition
                 var grupo: EquipoGrupo? = null
                 if (posicion > 0) {

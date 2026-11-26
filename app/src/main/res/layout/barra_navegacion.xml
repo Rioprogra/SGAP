@@ -62,7 +62,7 @@
             android:id="@+id/txtNavIA"
             style="@style/NavTexto"
             android:text="Gemini"
-            android:textColor="@color/ia_medio"
+            android:textColor="@color/ia_texto"
             android:textStyle="bold" />
     </LinearLayout>
 

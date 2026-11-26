@@ -88,9 +88,11 @@ object Recordatorios {
         }
     }
 
-    fun mostrar(context: Context, titulo: String, tipo: String, idTarea: String) {
+    fun mostrar(context: Context, titulo: String, tipo: String, idTarea: String, fecha: Long) {
+        val dias = Tarea(titulo, tipo, fecha, "").diasRestantes()
+        val cuando = if (dias <= 0) "Hoy se entrega" else "Mañana se entrega"
         avisar(
-            context, "Mañana se entrega: $titulo",
+            context, "$cuando: $titulo",
             "$tipo · no lo dejes para el último momento", idTarea, idTarea.hashCode()
         )
     }
@@ -136,7 +138,7 @@ class RecordatorioWorker(context: Context, parametros: WorkerParameters) : Worke
     override fun doWork(): Result {
         val titulo = inputData.getString("titulo") ?: "Tarea"
         val tipo = inputData.getString("tipo") ?: "Tarea"
-        Recordatorios.mostrar(applicationContext, titulo, tipo, inputData.getString("id") ?: "")
+        Recordatorios.mostrar(applicationContext, titulo, tipo, inputData.getString("id") ?: "", inputData.getLong("fecha", 0))
 
         applicationContext.getSharedPreferences("recordatorios", Context.MODE_PRIVATE)
             .edit()
